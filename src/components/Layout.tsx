@@ -187,7 +187,7 @@ const Layout: React.FC = () => {
             <footer className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-white/30 dark:border-gray-700/30 py-6 mt-8 transition-all duration-500">
                 <div className="container mx-auto px-4">
                     <div className="text-center text-gray-600 dark:text-gray-400 text-sm">
-                        <p>Marcy Fletcher © {new Date().getFullYear()} | Developed and supported by comrade Moffy</p>
+                        <p>Marcy Fletcher © {new Date().getFullYear()}</p>
                     </div>
                 </div>
             </footer>
