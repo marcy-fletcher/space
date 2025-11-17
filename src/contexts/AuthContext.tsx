@@ -6,7 +6,6 @@ import {AuthState} from "../types/authState.ts";
 interface AuthContextType extends AuthState {
     signUp: (email: string, password: string, fullName: string) => Promise<void>
     signIn: (email: string, password: string) => Promise<void>
-    signInWithGoogle: () => Promise<void>
     signOut: () => Promise<void>
 }
 
@@ -49,15 +48,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
-    const signInWithGoogle = async () => {
-        setLoading(true)
-        try {
-            await AuthService.signInWithGoogle()
-        } finally {
-            setLoading(false)
-        }
-    }
-
     const signOut = async () => {
         setLoading(true)
         try {
@@ -73,7 +63,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: !!user,
         signUp,
         signIn,
-        signInWithGoogle,
         signOut,
         profile: null
     }
