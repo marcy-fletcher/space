@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Post } from '../types/post';
 
 interface CreatePostFormProps {
-    onSubmit: (post: Omit<Post, 'id' | 'createdAt' | 'subscription'>) => void;
+    onSubmit: (post: Omit<Post, 'id' | 'createdAt' | 'subscription' | 'reactions'>) => void;
     onCancel: () => void;
     isLoading?: boolean;
 }

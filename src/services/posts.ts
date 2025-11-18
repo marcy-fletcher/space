@@ -207,7 +207,7 @@ export class PostService {
     }
   }
 
-  static async createPost(postData: Omit<Post, 'id' | 'createdAt' | 'subscription'>): Promise<boolean> {
+  static async createPost(postData: Omit<Post, 'id' | 'createdAt' | 'subscription' | 'reactions'>): Promise<boolean> {
     try {
       const { data, error } = await supabase
           .rpc('create_post', {
