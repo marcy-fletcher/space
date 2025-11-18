@@ -2,14 +2,41 @@ import React, { useState, useMemo, useEffect } from 'react';
 import BlogPostCard from '../components/BlogPostCard';
 import LockedPostCard from '../components/LockedPostCard';
 import SearchBar from '../components/SearchBar';
-import {PostService } from '../services/posts';
-import {Post} from "../types/post.ts";
+import { PostService } from '../services/posts';
+import { Post } from "../types/post.ts";
+
+type SortOption = 'relevance' | 'reactions' | 'alphabetical';
+
+const getInitialHideUnavailable = (): boolean => {
+    if (typeof window === 'undefined') return false; // For SSR safety
+
+    const savedHideUnavailable = localStorage.getItem('hideUnavailablePosts');
+    console.log('Hide unavailable from localStorage:', savedHideUnavailable);
+
+    if (savedHideUnavailable) {
+        try {
+            return JSON.parse(savedHideUnavailable);
+        } catch (error) {
+            console.error('Error parsing saved hideUnavailable preference:', error);
+            return false;
+        }
+    }
+
+    return false;
+};
 
 const PostsList: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [sortBy, setSortBy] = useState<SortOption>('relevance');
+    const [hideUnavailable, setHideUnavailable] = useState<boolean>(getInitialHideUnavailable);
+
+    useEffect(() => {
+        console.log('Saving hideUnavailable to localStorage:', hideUnavailable);
+        localStorage.setItem('hideUnavailablePosts', JSON.stringify(hideUnavailable));
+    }, [hideUnavailable]);
 
     useEffect(() => {
         const loadPosts = async () => {
@@ -28,28 +55,59 @@ const PostsList: React.FC = () => {
         loadPosts();
     }, []);
 
-    const filteredPosts = useMemo(() => {
-        if (!searchTerm.trim()) {
-            return posts;
+    const filteredAndSortedPosts = useMemo(() => {
+        let result = posts;
+
+        if (searchTerm.trim()) {
+            const lowerSearchTerm = searchTerm.toLowerCase();
+            result = result
+                .map((post): Post | undefined => {
+                    if (post == undefined || post.title === undefined) {
+                        return undefined;
+                    }
+
+                    const titleMatch = post.title?.toLowerCase().includes(lowerSearchTerm);
+                    const tagMatch = post.tags?.some(tag =>
+                        tag?.toLowerCase().includes(lowerSearchTerm)
+                    );
+
+                    return (titleMatch || tagMatch) ? post : undefined;
+                })
+                .filter((post): post is Post => post !== undefined);
         }
 
-        const lowerSearchTerm = searchTerm.toLowerCase();
+        if (hideUnavailable) {
+            result = result.filter(post => post.title !== undefined);
+        }
 
-        return posts
-            .map((post): Post | undefined => {
-                if (post == undefined || post.title === undefined) {
-                    return undefined;
+        switch (sortBy) {
+            case 'reactions':
+                result = [...result].sort((a, b) => {
+                    const aReactions = a.reactions ?
+                        (a.reactions.like + a.reactions.hot + a.reactions.sequel_request - a.reactions.dislike) : 0;
+                    const bReactions = b.reactions ?
+                        (b.reactions.like + b.reactions.hot + b.reactions.sequel_request - b.reactions.dislike) : 0;
+                    return bReactions - aReactions;
+                });
+                break;
+
+            case 'alphabetical':
+                result = [...result].sort((a, b) => {
+                    const aTitle = a.title || '';
+                    const bTitle = b.title || '';
+                    return aTitle.localeCompare(bTitle);
+                });
+                break;
+
+            case 'relevance':
+            default:
+                if (searchTerm.trim()) {
                 }
+                break;
+        }
 
-                const titleMatch = post.title?.toLowerCase().includes(lowerSearchTerm);
-                const tagMatch = post.tags?.some(tag =>
-                    tag?.toLowerCase().includes(lowerSearchTerm)
-                );
-
-                return (titleMatch || tagMatch) ? post : undefined;
-            })
-            .filter((post): post is Post => post !== undefined); // Type guard filter
-    }, [posts, searchTerm]);
+        return result;
+    }, [posts, searchTerm, sortBy, hideUnavailable]);
 
     if (loading) {
         return (
@@ -107,24 +165,65 @@ const PostsList: React.FC = () => {
 
             <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm transition-all duration-300">
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                        <label htmlFor="sort-select" className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                            Sort by:
+                        </label>
+                        <select
+                            id="sort-select"
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value as SortOption)}
+                            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-white text-sm transition-colors duration-200"
+                        >
+                            <option value="relevance">Most Relevant</option>
+                            <option value="reactions">Most Reactions</option>
+                            <option value="alphabetical">Alphabetical</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <label htmlFor="hide-unavailable" className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap cursor-pointer">
+                        Hide locked posts
+                    </label>
+                    <label htmlFor="hide-unavailable" className="relative inline-block w-12 h-6 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            id="hide-unavailable"
+                            checked={hideUnavailable}
+                            onChange={(e) => setHideUnavailable(e.target.checked)}
+                            className="sr-only"
+                        />
+                        <div className={`block w-12 h-6 rounded-full transition-colors duration-200 ${
+                            hideUnavailable ? 'bg-pink-500' : 'bg-gray-300 dark:bg-gray-600'
+                        }`}></div>
+                        <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-200 ${
+                            hideUnavailable ? 'transform translate-x-6' : ''
+                        }`}></div>
+                    </label>
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredPosts.map((post, index) => (
+                {filteredAndSortedPosts.map((post, index) => (
                     post?.title ? (
-                        <BlogPostCard key={index} post={post} />
+                        <BlogPostCard key={post.id || index} post={post} />
                     ) : (
-                        <LockedPostCard key={index} createdAt={post?.createdAt} accountTier={post?.subscription.requiredTierTitle} reactions={post.reactions} />
+                        <LockedPostCard key={post.id || index} createdAt={post?.createdAt} accountTier={post?.subscription.requiredTierTitle} reactions={post.reactions} />
                     )
                 ))}
             </div>
 
-            {filteredPosts.length === 0 && searchTerm && (
+            {filteredAndSortedPosts.length === 0 && searchTerm && (
                 <div className="text-center py-20">
                     <div className="text-6xl mb-4 transition-all duration-300">🔍</div>
                     <h3 className="text-2xl font-semibold text-white dark:text-gray-100 mb-2 font-serif transition-colors duration-300">
                         No stories found
                     </h3>
                     <p className="text-pink-200 dark:text-gray-400 font-sans transition-colors duration-300">
-                        Try adjusting your search terms
+                        Try adjusting your search terms or filters
                     </p>
                 </div>
             )}
