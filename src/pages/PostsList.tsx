@@ -112,7 +112,7 @@ const PostsList: React.FC = () => {
                     post?.title ? (
                         <BlogPostCard key={index} post={post} />
                     ) : (
-                        <LockedPostCard key={index} createdAt={post?.createdAt} accountTier={post?.subscription.requiredTierTitle} />
+                        <LockedPostCard key={index} createdAt={post?.createdAt} accountTier={post?.subscription.requiredTierTitle} reactions={post.reactions} />
                     )
                 ))}
             </div>

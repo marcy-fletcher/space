@@ -4,6 +4,8 @@ import TransformationSection from "./TransformationSection.tsx";
 import ReadFullButton from "./ReadFullButton.tsx";
 import WarningSection from "./WarningSection.tsx";
 import {Post} from "../types/post.ts";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbsUp, faThumbsDown, faFire, faStar } from '@fortawesome/free-solid-svg-icons';
 
 interface BlogPostCardProps {
     post: Post;
@@ -100,6 +102,63 @@ const BlogPostCard: React.FC<BlogPostCardProps> = ({ post }) => {
 
                 <TransformationSection transformations={post.transformations} />
                 <ReadFullButton handleReadMore={handleReadMore} />
+
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center justify-between max-w-md mx-auto">
+
+                        <div className="flex items-center gap-2 group">
+                            <div className="relative">
+                                <FontAwesomeIcon
+                                    icon={faThumbsUp}
+                                    className="text-green-500 group-hover:text-green-600 transition-colors duration-200"
+                                    size="sm"
+                                />
+                            </div>
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[20px]">
+                                {post.reactions.like}
+                            </span>
+                        </div>
+
+                        <div className="flex items-center gap-2 group">
+                            <div className="relative">
+                                <FontAwesomeIcon
+                                    icon={faThumbsDown}
+                                    className="text-red-500 group-hover:text-red-600 transition-colors duration-200"
+                                    size="sm"
+                                />
+                            </div>
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[20px]">
+                                {post.reactions.dislike}
+                            </span>
+                        </div>
+
+                        <div className="flex items-center gap-2 group">
+                            <div className="relative">
+                                <FontAwesomeIcon
+                                    icon={faFire}
+                                    className="text-orange-500 group-hover:text-orange-600 transition-colors duration-200"
+                                    size="sm"
+                                />
+                            </div>
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[20px]">
+                                {post.reactions.hot}
+                            </span>
+                        </div>
+
+                        <div className="flex items-center gap-2 group">
+                            <div className="relative">
+                                <FontAwesomeIcon
+                                    icon={faStar}
+                                    className="text-purple-500 group-hover:text-purple-600 transition-colors duration-200"
+                                    size="sm"
+                                />
+                            </div>
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[20px]">
+                                {post.reactions.sequel_request}
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </article>
     );

@@ -45,5 +45,11 @@ export interface Post {
             url?: string;
             picture?: string;
         }>
+    };
+    reactions: {
+        like: number;
+        dislike: number;
+        hot: number;
+        sequel_request: number;
     }
 }

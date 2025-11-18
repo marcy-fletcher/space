@@ -1,5 +1,6 @@
 import React from 'react';
 import {Post} from "../../types/post.ts";
+import {ReactionsSection} from "./ReactionsSection.tsx";
 
 interface StoryHeaderProps {
     post: Post;
@@ -34,6 +35,8 @@ const StoryHeader: React.FC<StoryHeaderProps> = ({ post, formatDate }) => {
                     </div>
                 )}
             </div>
+
+            <ReactionsSection postId={post.id} />
         </header>
     );
 };

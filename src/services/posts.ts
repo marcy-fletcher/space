@@ -1,5 +1,6 @@
 import {supabase} from "./supabase.ts";
 import {Post} from "../types/post.ts";
+import {ReactionType} from "../types/reactions.ts";
 
 interface PostDto {
   id: string;
@@ -43,6 +44,10 @@ interface PostDto {
       type: string;
     }>;
   };
+  post_reaction_counts: Array<{
+    count: number;
+    reaction_type: ReactionType;
+  }>;
   related_posts: Array<{
     related_id: string;
     post_identity: {
@@ -62,10 +67,23 @@ interface PostDto {
   }>;
 }
 
+
 export function mapDtoToPost(dto: PostDto): Post {
   const safeMap = <T, U>(array: T[] | undefined | null, mapper: (item: T) => U): U[] => {
     return Array.isArray(array) ? array.map(mapper) : [];
   };
+
+  const reactions: Post['reactions'] = dto?.post_reaction_counts?.reduce((acc, item) => {
+    if (item.reaction_type in acc) {
+      acc[item.reaction_type as keyof Post['reactions']] = item.count;
+    }
+    return acc;
+  }, {
+    like: 0,
+    dislike: 0,
+    hot: 0,
+    sequel_request: 0
+  } as Post['reactions']);
 
   const relatedPosts = safeMap(dto.related_posts, relatedPost => ({
     id: relatedPost.related_id,
@@ -103,7 +121,8 @@ export function mapDtoToPost(dto: PostDto): Post {
       requiredTierLevel: dto.subscription_tiers?.level ?? 0,
       requiredTierTitle: dto.subscription_tiers?.title ?? ''
     },
-    relatedPosts: relatedPosts
+    relatedPosts: relatedPosts,
+    reactions: reactions
   };
 }
 
@@ -119,6 +138,10 @@ export class PostService {
               title,
               preview,
               preview_picture
+            ),
+            post_reaction_counts (
+              reaction_type,
+              count
             ),
             post_metadata (*)
           `)
