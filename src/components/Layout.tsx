@@ -11,7 +11,8 @@ import {
     faTimes,
     faInfoCircle,
     faHome,
-    faBolt
+    faBolt,
+    faLightbulb
 } from '@fortawesome/free-solid-svg-icons';
 
 const Layout: React.FC = () => {
@@ -37,6 +38,7 @@ const Layout: React.FC = () => {
 
     const navLinks = [
         { to: "/", label: "Stories", icon: faHome },
+        { to: "/submit-idea", label: "Submit idea", icon: faLightbulb },
         { to: "/upgrade", label: "Upgrade account", icon: faBolt },
         { to: "/about", label: "About me", icon: faInfoCircle }
     ];

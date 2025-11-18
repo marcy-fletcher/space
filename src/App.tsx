@@ -10,6 +10,7 @@ import AboutPage from "./pages/AboutPage.tsx";
 import CreatePostPage from "./pages/CreatePostPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import SubscriptionsPage from "./pages/SubscriptionsPage.tsx";
+import SubmitIdeaPage from "./pages/SubmitIdeaPage.tsx";
 
 const AgeVerification: React.FC = () => {
     return (
@@ -56,6 +57,7 @@ const AppContent: React.FC = () => {
                         <Route index element={<PostsList />} />
                         <Route path="story/:id" element={<PostPage />} />
                         <Route path="upgrade" element={ <SubscriptionsPage /> } />
+                        <Route path="submit-idea" element={ <SubmitIdeaPage /> } />
                         <Route path="create-story/" element={
                             <ProtectedRoute children={<CreatePostPage />} requiredTier={999} />
                         } />
