@@ -149,16 +149,37 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
                 {children}
             </td>
         ),
-        img: ({ src, alt, title }: { src?: string; alt?: string; title?: string }) => (
-            <img
-                src={src}
-                alt={alt}
-                title={title}
-                className="rounded-lg shadow-md my-4 max-w-full h-auto
-                         border border-gray-200 dark:border-gray-700
-                         transition-all duration-200 hover:shadow-lg"
-            />
-        ),
+        img: ({ src, alt, title }: { src?: string; alt?: string; title?: string }) => {
+
+            const isVideo = src && /\.(mp4|webm|ogg|mov|avi)$/i.test(src);
+
+            if (isVideo) {
+                return (
+                    <video
+                        src={src}
+                        title={title}
+                        controls
+                        muted
+                        className="rounded-lg shadow-md my-4 max-w-full h-auto
+                                 border border-gray-200 dark:border-gray-700
+                                 transition-all duration-200 hover:shadow-lg"
+                    >
+                        Your browser does not support the video tag.
+                    </video>
+                );
+            }
+
+            return (
+                <img
+                    src={src}
+                    alt={alt}
+                    title={title}
+                    className="rounded-lg shadow-md my-4 max-w-full h-auto
+                             border border-gray-200 dark:border-gray-700
+                             transition-all duration-200 hover:shadow-lg"
+                />
+            );
+        },
     };
 
     return (
