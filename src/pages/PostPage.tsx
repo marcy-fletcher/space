@@ -90,6 +90,23 @@ const PostPage: React.FC = () => {
     const isStoryUnavailable = !post || !post.title || !post.fullContent ||
         post.title.trim() === '' || post.fullContent.trim() === '';
 
+    const renderContent = () => {
+        if (!post?.fullContent) return null;
+
+        const contentType = post.contentType || 'markdown';
+
+        switch (contentType) {
+            case 'html':
+                return (
+                    <div dangerouslySetInnerHTML={{ __html: post.fullContent }}
+                    />
+                );
+            case 'markdown':
+            default:
+                return <MarkdownRenderer content={post.fullContent} />;
+        }
+    };
+
     if (id != undefined && showWarningModal && post?.warnings && post.warnings.length > 0) {
         return (
             <ContentWarning
@@ -141,7 +158,7 @@ const PostPage: React.FC = () => {
                     formatDate={formatDate}
                 />
 
-                <MarkdownRenderer content={post.fullContent!} />
+                {renderContent()}
 
                 <StoryFooter />
             </article>

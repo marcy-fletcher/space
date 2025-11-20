@@ -8,6 +8,7 @@ export interface Post {
     fullContent?: string;
     createdAt: string;
     ageRestriction?: "everyone" | "mature" | "explicit",
+    contentType?: "markdown" | "html",
     transformations?: Array<{
         type: string;
         from: string;

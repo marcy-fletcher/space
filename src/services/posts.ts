@@ -16,6 +16,7 @@ interface PostDto {
     preview: string;
     preview_picture: string;
     full_content: string;
+    content_type: "markdown" | "html";
   };
   post_references: {
     people?: Array<{
@@ -105,6 +106,7 @@ export function mapDtoToPost(dto: PostDto): Post {
     previewPicture: dto.post_content?.preview_picture,
     createdAt: dto.created_at,
     fullContent: dto.post_content?.full_content,
+    contentType: dto.post_content?.content_type,
     references: dto.post_references,
     ageRestriction: dto.post_metadata?.age_restriction,
     transformations: safeMap(dto.post_metadata?.transformations, trans => ({
