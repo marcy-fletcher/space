@@ -13,7 +13,8 @@ import {
     faBug,
     faHome,
     faBolt,
-    faLightbulb
+    faLightbulb,
+    faHourglass
 } from '@fortawesome/free-solid-svg-icons';
 import FeedbackModal from "./FeedbackModal.tsx";
 
@@ -42,7 +43,8 @@ const Layout: React.FC = () => {
     const navLinks = [
         { to: "/", label: "Stories", icon: faHome },
         { to: "/submit-idea", label: "Submit idea", icon: faLightbulb },
-        { to: "/upgrade", label: "Upgrade account", icon: faBolt },
+        { to: "/schedule", label: "Schedule", icon: faHourglass },
+        { to: "/upgrade", label: "Subscriptions", icon: faBolt },
         { to: "/about", label: "About me", icon: faInfoCircle }
     ];
 
