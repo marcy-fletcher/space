@@ -108,7 +108,7 @@ const LockedPostCard: React.FC<LockedPostCardProps> = ({ createdAt, accountTier,
                     </div>
                 </div>
 
-                <div className="flex-grow"></div>
+                <div className="flex-grow mt-4"></div>
 
                 <div className="w-full max-w-xs pt-4 border-t border-gray-200 dark:border-gray-700 mt-auto">
                     <div className="flex items-center justify-between">
