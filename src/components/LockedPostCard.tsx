@@ -106,12 +106,6 @@ const LockedPostCard: React.FC<LockedPostCardProps> = ({ createdAt, accountTier,
                             Created: {formatDate(createdAt)}
                         </span>
                     </div>
-
-                    <div className="flex gap-2">
-                        <div className="w-2 h-2 rounded-full bg-primary-400 dark:bg-primary-500 animate-pulse"></div>
-                        <div className="w-2 h-2 rounded-full bg-primary-400 dark:bg-primary-500 animate-pulse delay-100"></div>
-                        <div className="w-2 h-2 rounded-full bg-primary-400 dark:bg-primary-500 animate-pulse delay-200"></div>
-                    </div>
                 </div>
 
                 <div className="flex-grow"></div>
