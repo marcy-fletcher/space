@@ -85,12 +85,6 @@ const LockedRelatedStory: React.FC<LockedRelatedStoryProps> = ({ createdAt, acco
                 <div className="text-xs text-gray-500 dark:text-gray-400 font-medium">
                     Created {formatDate(createdAt)}
                 </div>
-
-                <div className="flex gap-1.5 mt-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary-400 dark:bg-primary-500"></div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary-300 dark:bg-primary-400"></div>
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary-400 dark:bg-primary-500"></div>
-                </div>
             </div>
         </div>
     );
