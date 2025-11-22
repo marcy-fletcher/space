@@ -44,7 +44,7 @@ export class ReactionService {
         const wasAdded = result.user_reactions.includes(reactionType);
         const action: 'added' | 'removed' = wasAdded ? 'added' : 'removed';
 
-        await logging.logUserAction('Reaction Modified', `User ${action} ${reactionType} reaction from post ${postId}`);
+        await logging.logUserAction('Reaction Modified', `User ${action} ${reactionType} reaction from post ${postId}`, {'post_id': postId});
 
         return {
             ...result,
