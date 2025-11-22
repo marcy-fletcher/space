@@ -11,9 +11,19 @@ import {
     faKey
 } from "@fortawesome/free-solid-svg-icons";
 
-import React from 'react';
+import React, {useEffect} from 'react';
+import {logging} from "../services/logging.ts";
 
 const AboutPage: React.FC = () => {
+
+    useEffect(() => {
+        const log = async () => {
+            await logging.logUserAction('Page Accessed', 'User accessed the About section');
+        };
+
+        log();
+    }, []);
+
     return (
         <div className="min-h-screen text-gray-800 dark:text-gray-200 transition-colors">
             <div className="hidden lg:block">
