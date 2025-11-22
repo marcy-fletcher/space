@@ -7,6 +7,7 @@ export type LogType =
     | 'performance';
 
 export interface LogEntry {
+    id?: string;
     user_id: string;
     session_id: string;
     log_type: LogType;
@@ -23,4 +24,12 @@ export interface LogEntryInput {
     action: string;
     message: string;
     additional_data?: Record<string, any>;
+}
+
+
+export interface LogFilters {
+    log_type?: LogType | 'all';
+    date_from?: string;
+    date_to?: string;
+    search?: string;
 }
