@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LogEntry, LogFilters } from '../types/logs';
+import {LogEntry, LogFilters} from '../types/logs';
 import LogsTable from './LogsTable';
 import LogsStats from './LogsStats';
 import {supabase} from "../services/supabase.ts";
@@ -15,6 +15,10 @@ export interface CompactLogs {
     message: LogEntry['message'];
     username?: string;
     createdAt: string;
+    sessionId: string;
+    additionalData?: Record<string, any>;
+    ipAddress?: string;
+    userAgent?: string;
 }
 
 interface LogsDto {
@@ -25,7 +29,11 @@ interface LogsDto {
     created_at: string;
     user_profiles: {
         name: string;
-    }
+    },
+    session_id: string;
+    additional_data?: Record<string, any>;
+    ip_address?: string;
+    user_agent?: string;
 }
 
 interface PaginationState {
@@ -42,7 +50,11 @@ function convertToCompact(dto: LogsDto) : CompactLogs {
         logType: dto.log_type,
         message: dto.message,
         username: dto.user_profiles?.name,
-        createdAt: dto.created_at
+        createdAt: dto.created_at,
+        sessionId: dto.session_id,
+        additionalData: dto.additional_data,
+        ipAddress: dto.ip_address,
+        userAgent: dto.user_agent
     }
 }
 
@@ -83,19 +95,14 @@ const LogsDashboard: React.FC = () => {
             let query = supabase
                 .from('logs')
                 .select(`
-                id,
-                action,
-                log_type,
-                message,
-                created_at,
+                *,
                 user_profiles(
                     name
                 )
             `)
-                .order('created_at', { ascending: false })
-                .range((page - 1) * pagination.pageSize, page * pagination.pageSize - 1);
+            .order('created_at', { ascending: false })
+            .range((page - 1) * pagination.pageSize, page * pagination.pageSize - 1);
 
-            // Apply filters to both count and data queries
             if (filters.log_type && filters.log_type !== 'all') {
                 query = query.eq('log_type', filters.log_type);
                 countQuery = countQuery.eq('log_type', filters.log_type);

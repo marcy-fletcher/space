@@ -13,8 +13,17 @@ import SubscriptionsPage from "./pages/SubscriptionsPage.tsx";
 import SubmitIdeaPage from "./pages/SubmitIdeaPage.tsx";
 import WritingSchedulePage from "./pages/WritingSchedulePage.tsx";
 import LogsDashboard from "./components/LogsDashboard.tsx";
+import {logging} from "./services/logging.ts";
 
 const AgeVerification: React.FC = () => {
+    const handleAgeConfirm = async () => {
+
+        await logging.logUserAction('Age confirm', 'User confirmed they are 18 years or older and accepted age verification');
+
+        localStorage.setItem('ageVerified', 'true');
+        window.location.reload();
+    };
+
     return (
         <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-md w-full mx-auto text-center shadow-2xl">
@@ -27,10 +36,7 @@ const AgeVerification: React.FC = () => {
                 </p>
                 <div className="space-y-4">
                     <button
-                        onClick={() => {
-                            localStorage.setItem('ageVerified', 'true');
-                            window.location.reload();
-                        }}
+                        onClick={handleAgeConfirm}
                         className="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 transform hover:scale-105"
                     >
                         I am 18 years or older
