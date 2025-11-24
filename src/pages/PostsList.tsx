@@ -44,7 +44,7 @@ const PostsList: React.FC = () => {
         const loadPosts = async () => {
             try {
                 setLoading(true);
-                const response = await PostService.getPaginatedPosts(currentPage, pageSize);
+                const response = await PostService.getPaginatedPosts(currentPage, pageSize, hideUnavailable);
                 setPosts(response.posts);
                 setTotalPosts(response.totalCount);
             } catch (err) {
@@ -56,7 +56,7 @@ const PostsList: React.FC = () => {
         };
 
         loadPosts();
-    }, [currentPage, pageSize]);
+    }, [currentPage, pageSize, hideUnavailable]);
 
     const filteredAndSortedPosts = useMemo(() => {
         let result = posts;

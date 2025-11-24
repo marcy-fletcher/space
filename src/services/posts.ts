@@ -175,30 +175,40 @@ export class PostService {
     }
   }
 
-  static async getPaginatedPosts(page: number = 1, pageSize: number = 9): Promise<PaginatedPostsResponse> {
+  static async getPaginatedPosts(
+      page: number = 1,
+      pageSize: number = 9,
+      filterUnavailable: boolean = false
+  ): Promise<PaginatedPostsResponse> {
     try {
       const from = (page - 1) * pageSize;
       const to = from + pageSize - 1;
 
-      const { data, error, count } = await supabase
+      let query = supabase
           .from('post_identity')
           .select(`
-            *,
-            subscription_tiers (*),
-            post_content (
-              title,
-              preview,
-              preview_picture
-            ),
-            post_reaction_counts (
-              reaction_type,
-              count
-            ),
-            post_metadata (*)
-          `, { count: 'exact' })
+        *,
+        subscription_tiers (*),
+        post_content (
+          title,
+          preview,
+          preview_picture
+        ),
+        post_reaction_counts (
+          reaction_type,
+          count
+        ),
+        post_metadata (*)
+      `, { count: 'exact' })
           .not('tier_id', 'is', null)
-          .order('created_at', { ascending: false })
-          .range(from, to);
+          .order('created_at', { ascending: false });
+
+      // Add filter to exclude posts with null content if requested
+      if (filterUnavailable) {
+        query = query.not('post_content', 'is', null);
+      }
+
+      const { data, error, count } = await query.range(from, to);
 
       if (error) {
         console.error('Error fetching paginated posts:', error);
