@@ -13,13 +13,9 @@ import SubscriptionsPage from "./pages/SubscriptionsPage.tsx";
 import SubmitIdeaPage from "./pages/SubmitIdeaPage.tsx";
 import WritingSchedulePage from "./pages/WritingSchedulePage.tsx";
 import LogsDashboard from "./components/LogsDashboard.tsx";
-import {logging} from "./services/logging.ts";
 
 const AgeVerification: React.FC = () => {
     const handleAgeConfirm = async () => {
-
-        await logging.logUserAction('Age confirm', 'User confirmed they are 18 years or older and accepted age verification');
-
         localStorage.setItem('ageVerified', 'true');
         window.location.reload();
     };

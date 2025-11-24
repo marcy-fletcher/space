@@ -1,6 +1,5 @@
 import {supabase} from "./supabase.ts";
 import {WritingProject} from "../types/schedule.ts";
-import {logging} from "./logging.ts";
 
 export class ScheduleService {
     static async getWritingProjects(): Promise<WritingProject[]> {
@@ -13,14 +12,10 @@ export class ScheduleService {
             `)
             .order('planned_date', { ascending: false });
 
-            console.log(data);
-
             if (error) {
                 console.error('Error fetching writing projects:', error);
                 throw new Error(`Failed to load schedule: ${error.message}`);
             }
-
-            await logging.logUserAction('Page Accessed', 'User accessed the Schedule section');
 
             return data.map(project => ({
                 id: project.id,

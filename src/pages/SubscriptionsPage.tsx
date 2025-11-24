@@ -1,20 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { faDeviantart, faDiscord } from '@fortawesome/free-brands-svg-icons';
-import {logging} from "../services/logging.ts";
-
 const SubscriptionsPage: React.FC = () => {
     const [showContactModal, setShowContactModal] = useState(false);
     const [copyFeedback, setCopyFeedback] = useState('');
-
-    useEffect(() => {
-        const log = async () => {
-            await logging.logUserAction('Page Accessed', 'User accessed the Subscriptions section');
-        };
-
-        log();
-    }, []);
 
     const copyDiscordTag = () => {
         navigator.clipboard.writeText('@masha.fin');

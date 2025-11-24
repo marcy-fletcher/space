@@ -4,7 +4,6 @@ import {
     ToggleReactionResult
 } from '../types/reactions';
 import {supabase} from "./supabase.ts";
-import {logging} from "./logging.ts";
 
 export class ReactionService {
     async getPostReactions(postId: string): Promise<PostReactions> {
@@ -43,8 +42,6 @@ export class ReactionService {
 
         const wasAdded = result.user_reactions.includes(reactionType);
         const action: 'added' | 'removed' = wasAdded ? 'added' : 'removed';
-
-        await logging.logUserAction('Reaction Modified', `User ${action} ${reactionType} reaction from post ${postId}`, {'post_id': postId});
 
         return {
             ...result,

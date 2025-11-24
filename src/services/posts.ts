@@ -1,7 +1,6 @@
 import {supabase} from "./supabase.ts";
 import {Post} from "../types/post.ts";
 import {ReactionType} from "../types/reactions.ts";
-import {logging} from "./logging.ts";
 
 interface PostDto {
   id: string;
@@ -160,8 +159,6 @@ export class PostService {
         return [];
       }
 
-      await logging.logUserAction('Posts Retrieved', `User retrieved ${data.length} posts from feed`);
-
       return data.map(mapDtoToPost);
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -205,7 +202,6 @@ export class PostService {
         return null;
       }
 
-      await logging.logUserAction('Post Viewed', `User accessed post: "${data.post_content?.title}" (ID: ${id})`, {'post_id': id});
       return mapDtoToPost(data);
     } catch (error) {
       console.error('Error fetching post by ID:', error);

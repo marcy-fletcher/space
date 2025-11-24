@@ -1,6 +1,5 @@
 import {IdeaSubmission} from "../types/ideas.ts";
 import {supabase} from "./supabase.ts";
-import {logging} from "./logging.ts";
 
 export class IdeaService {
     static async submitIdea(ideaData: IdeaSubmission): Promise<boolean> {
@@ -17,8 +16,6 @@ export class IdeaService {
                 console.error('Supabase error:', error);
                 return false;
             }
-
-            await logging.logUserAction('Idea Contribution', 'User contributed a new idea');
 
             return true;
 
