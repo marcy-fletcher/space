@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { AuthModal } from './auth/AuthModal';
 import { UserMenu } from './auth/UserMenu';
 import ThemeToggle from './ThemeToggle';
 
@@ -20,16 +19,18 @@ import FeedbackModal from "./FeedbackModal.tsx";
 
 const Layout: React.FC = () => {
     const { isAuthenticated, loading } = useAuth();
-    const [showAuthModal, setShowAuthModal] = useState(false);
     const [showFeedbackModal, setShowFeedbackModal] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [, setAuthMode] = useState<'login' | 'register'>('login');
     const location = useLocation();
+    const navigate = useNavigate();
 
     const handleAuthClick = (mode: 'login' | 'register') => {
-        setAuthMode(mode);
-        setShowAuthModal(true);
-        setIsMobileMenuOpen(false); // Close mobile menu when auth modal opens
+        if (mode === 'login') {
+            navigate('/login');
+        } else {
+            navigate('/register');
+        }
+        setIsMobileMenuOpen(false);
     };
 
     const toggleMobileMenu = () => {
@@ -198,11 +199,6 @@ const Layout: React.FC = () => {
                     </div>
                 </div>
             </footer>
-
-            <AuthModal
-                isOpen={showAuthModal}
-                onClose={() => setShowAuthModal(false)}
-            />
 
             <FeedbackModal
                 isOpen={showFeedbackModal}

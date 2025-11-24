@@ -5,7 +5,8 @@ import SearchBar from '../components/SearchBar';
 import { PostService } from '../services/posts';
 import { Post } from "../types/post.ts";
 
-type SortOption = 'relevance' | 'reactions' | 'alphabetical';
+type SortOption = 'relevance' | 'alphabetical';
+type SortDirection = 'asc' | 'desc';
 
 const getInitialHideUnavailable = (): boolean => {
     if (typeof window === 'undefined') return false;
@@ -30,6 +31,7 @@ const PostsList: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState<SortOption>('relevance');
+    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [hideUnavailable, setHideUnavailable] = useState<boolean>(getInitialHideUnavailable);
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -40,11 +42,29 @@ const PostsList: React.FC = () => {
         localStorage.setItem('hideUnavailablePosts', JSON.stringify(hideUnavailable));
     }, [hideUnavailable]);
 
+    // Update sort direction when sortBy changes to maintain logical defaults
+    useEffect(() => {
+        if (sortBy === 'relevance') {
+            setSortDirection('desc'); // Newest first by default
+        } else if (sortBy === 'alphabetical') {
+            setSortDirection('asc'); // A-Z by default
+        }
+    }, [sortBy]);
+
     useEffect(() => {
         const loadPosts = async () => {
             try {
                 setLoading(true);
-                const response = await PostService.getPaginatedPosts(currentPage, pageSize, hideUnavailable);
+                // Determine ordering parameters based on sortBy state
+                const orderBy = sortBy === 'relevance' ? 'created_at' : 'title';
+
+                const response = await PostService.getPaginatedPosts(
+                    currentPage,
+                    pageSize,
+                    hideUnavailable,
+                    orderBy,
+                    sortDirection
+                );
                 setPosts(response.posts);
                 setTotalPosts(response.totalCount);
             } catch (err) {
@@ -56,7 +76,7 @@ const PostsList: React.FC = () => {
         };
 
         loadPosts();
-    }, [currentPage, pageSize, hideUnavailable]);
+    }, [currentPage, pageSize, hideUnavailable, sortBy, sortDirection]); // Added sortDirection to dependencies
 
     const filteredAndSortedPosts = useMemo(() => {
         let result = posts;
@@ -79,40 +99,42 @@ const PostsList: React.FC = () => {
                 .filter((post): post is Post => post !== undefined);
         }
 
-        if (hideUnavailable) {
-            result = result.filter(post => post.title !== undefined);
-        }
-
-        switch (sortBy) {
-            case 'reactions':
-                result = [...result].sort((a, b) => {
-                    const aReactions = a.reactions ?
-                        (a.reactions.like + a.reactions.hot + a.reactions.sequel_request - a.reactions.dislike) : 0;
-                    const bReactions = b.reactions ?
-                        (b.reactions.like + b.reactions.hot + b.reactions.sequel_request - b.reactions.dislike) : 0;
-                    return bReactions - aReactions;
-                });
-                break;
-
-            case 'alphabetical':
-                result = [...result].sort((a, b) => {
-                    const aTitle = a.title || '';
-                    const bTitle = b.title || '';
-                    return aTitle.localeCompare(bTitle);
-                });
-                break;
-
-            case 'relevance':
-            default:
-                if (searchTerm.trim()) {
-                    // Relevance sorting could be implemented here
-                    // For now, we'll keep the search results in their original order
-                }
-                break;
+        // Client-side sorting as fallback (in case API sorting doesn't work as expected)
+        if (sortBy === 'alphabetical') {
+            result = [...result].sort((a, b) => {
+                const titleA = a.title || '';
+                const titleB = b.title || '';
+                const comparison = titleA.localeCompare(titleB);
+                return sortDirection === 'asc' ? comparison : -comparison;
+            });
+        } else if (sortBy === 'relevance') {
+            // For relevance (created_at), we assume the API already returns them in correct order
+            // but we can add client-side sorting as backup
+            result = [...result].sort((a, b) => {
+                const dateA = new Date(a.createdAt || 0).getTime();
+                const dateB = new Date(b.createdAt || 0).getTime();
+                return sortDirection === 'desc' ? dateB - dateA : dateA - dateB;
+            });
         }
 
         return result;
-    }, [posts, searchTerm, sortBy, hideUnavailable]);
+    }, [posts, searchTerm, sortBy, sortDirection]); // Added sortDirection to dependencies
+
+    const handleSortChange = (newSortBy: SortOption) => {
+        setSortBy(newSortBy);
+    };
+
+    const handleSortDirectionToggle = () => {
+        setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    };
+
+    const getSortButtonLabel = () => {
+        if (sortBy === 'relevance') {
+            return sortDirection === 'desc' ? 'Newest First' : 'Oldest First';
+        } else {
+            return sortDirection === 'asc' ? 'A → Z' : 'Z → A';
+        }
+    };
 
     const totalPages = Math.ceil(totalPosts / pageSize);
     const startItem = (currentPage - 1) * pageSize + 1;
@@ -228,14 +250,29 @@ const PostsList: React.FC = () => {
                         <select
                             id="sort-select"
                             value={sortBy}
-                            onChange={(e) => setSortBy(e.target.value as SortOption)}
+                            onChange={(e) => handleSortChange(e.target.value as SortOption)}
                             className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-white text-sm transition-colors duration-200"
                         >
-                            <option value="relevance">Most Relevant</option>
-                            <option value="reactions">Most Reactions</option>
+                            <option value="relevance">Date</option>
                             <option value="alphabetical">Alphabetical</option>
                         </select>
                     </div>
+
+                    <button
+                        onClick={handleSortDirectionToggle}
+                        className="flex items-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 dark:bg-gray-700 dark:text-white text-sm transition-all duration-200"
+                        title={`Toggle sort direction: ${getSortButtonLabel()}`}
+                    >
+                        <span>{getSortButtonLabel()}</span>
+                        <svg
+                            className={`w-4 h-4 transition-transform duration-200 ${sortDirection === 'desc' ? 'rotate-180' : ''}`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -269,7 +306,11 @@ const PostsList: React.FC = () => {
                     post?.title ? (
                         <BlogPostCard key={post.id || index} post={post} />
                     ) : (
-                        <LockedPostCard key={post.id || index} createdAt={post?.createdAt} accountTier={post?.subscription.requiredTierTitle} reactions={post.reactions} />
+                        <LockedPostCard key={post.id || index}
+                                        createdAt={post?.createdAt}
+                                        accountTierName={post?.subscription.requiredTierTitle}
+                                        accountTierLevel={post?.subscription.requiredTierLevel}
+                                        reactions={post.reactions} />
                     )
                 ))}
             </div>

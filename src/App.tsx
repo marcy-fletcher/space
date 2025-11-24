@@ -13,6 +13,8 @@ import SubscriptionsPage from "./pages/SubscriptionsPage.tsx";
 import SubmitIdeaPage from "./pages/SubmitIdeaPage.tsx";
 import WritingSchedulePage from "./pages/WritingSchedulePage.tsx";
 import LogsDashboard from "./components/LogsDashboard.tsx";
+import RegisterPage from "./pages/RegisterPage.tsx";
+import LoginPage from "./pages/LoginPage.tsx";
 
 const AgeVerification: React.FC = () => {
     const handleAgeConfirm = async () => {
@@ -64,6 +66,8 @@ const AppContent: React.FC = () => {
                         <Route path="submit-idea" element={ <SubmitIdeaPage /> } />
                         <Route path="schedule" element={ <WritingSchedulePage /> } />
                         <Route path="dashboard" element={ <LogsDashboard /> } />
+                        <Route path="register" element={ <RegisterPage /> } />
+                        <Route path="login" element={ <LoginPage /> } />
                         <Route path="create-story/" element={
                             <ProtectedRoute children={<CreatePostPage />} requiredTier={999} />
                         } />

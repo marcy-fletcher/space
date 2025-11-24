@@ -178,7 +178,9 @@ export class PostService {
   static async getPaginatedPosts(
       page: number = 1,
       pageSize: number = 9,
-      filterUnavailable: boolean = false
+      filterUnavailable: boolean = false,
+      orderBy: 'created_at' | 'title' = 'created_at',
+      orderDirection: 'asc' | 'desc' = 'desc'
   ): Promise<PaginatedPostsResponse> {
     try {
       const from = (page - 1) * pageSize;
@@ -200,10 +202,17 @@ export class PostService {
         ),
         post_metadata (*)
       `, { count: 'exact' })
-          .not('tier_id', 'is', null)
-          .order('created_at', { ascending: false });
+          .not('tier_id', 'is', null);
 
-      // Add filter to exclude posts with null content if requested
+      if (orderBy === 'created_at') {
+        query = query.order('created_at', { ascending: orderDirection === 'asc' });
+      } else if (orderBy === 'title') {
+        query = query.order('post_content(title)', {
+          ascending: orderDirection === 'asc',
+          nullsFirst: orderDirection === 'asc'
+        });
+      }
+
       if (filterUnavailable) {
         query = query.not('post_content', 'is', null);
       }
