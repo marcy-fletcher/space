@@ -18,7 +18,7 @@ import { ScheduleService } from '../services/schedule';
 import LoadingSpinner from '../components/story/LoadingSpinner.tsx';
 import ErrorState from '../components/story/ErrorState.tsx';
 
-const WritingSchedulePage: React.FC = () => {
+const SchedulePage: React.FC = () => {
     const [projects, setProjects] = useState<WritingProject[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -30,7 +30,6 @@ const WritingSchedulePage: React.FC = () => {
                 setError(null);
 
                 const projectsData = await ScheduleService.getWritingProjects();
-                console.log(projectsData);
                 setProjects(projectsData);
             } catch (err) {
                 console.error('Error loading writing projects:', err);
@@ -349,4 +348,4 @@ const WritingSchedulePage: React.FC = () => {
     );
 };
 
-export default WritingSchedulePage;
+export default SchedulePage;
