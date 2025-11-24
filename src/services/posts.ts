@@ -179,7 +179,7 @@ export class PostService {
       filterUnavailable: boolean = false,
       orderBy: 'created_at' | 'title' = 'created_at',
       orderDirection: 'asc' | 'desc' = 'desc',
-      searchTitle?: string // New parameter for title search
+      searchTerm?: string,
   ): Promise<PaginatedPostsResponse> {
     try {
       const from = (page - 1) * pageSize;
@@ -203,17 +203,29 @@ export class PostService {
       `, { count: 'exact' })
           .not('tier_id', 'is', null);
 
-      if (searchTitle && searchTitle.trim() !== '') {
-        query = query
-            .not('post_content', 'is', null)
-            .not('post_content.title', 'is', null)
-            .ilike('post_content.title', `%${searchTitle.trim()}%`);
+      if (searchTerm && searchTerm.trim() !== '') {
+        const trimmedTerm = searchTerm.trim();
+
+        if (trimmedTerm.startsWith('#')) {
+          const searchTag = trimmedTerm.substring(1).toLowerCase().trim();
+
+          if (searchTag !== '') {
+            query = query
+                .filter('post_metadata.tags', 'cs', `["${searchTag}"]`)
+                .not('post_metadata', 'is', null);
+          }
+        } else {
+          query = query
+              .not('post_content', 'is', null)
+              .not('post_content.title', 'is', null)
+              .ilike('post_content.title', `%${trimmedTerm}%`);
+        }
       }
 
       if (orderBy === 'created_at') {
         query = query.order('created_at', { ascending: orderDirection === 'asc' });
       } else if (orderBy === 'title') {
-        query = query.order('post_content(title)', {
+        query = query.order('post_content.title', {
           ascending: orderDirection === 'asc',
           nullsFirst: orderDirection === 'asc'
         });
@@ -233,6 +245,8 @@ export class PostService {
       const totalCount = count || 0;
       const posts = data?.map(mapDtoToPost) || [];
       const totalPages = Math.ceil(totalCount / pageSize);
+
+      console.log(data);
 
       return {
         posts,

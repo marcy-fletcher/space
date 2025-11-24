@@ -62,6 +62,7 @@ const PostsList: React.FC = () => {
 
                 const orderBy = sortBy === 'relevance' ? 'created_at' : 'title';
                 const searchByTitle = appliedSearchTerm.trim() || undefined;
+                const searchByTag = appliedSearchTerm.trim() || undefined;
 
                 const response = await PostService.getPaginatedPosts(
                     currentPage,
@@ -69,7 +70,8 @@ const PostsList: React.FC = () => {
                     hideUnavailable,
                     orderBy,
                     sortDirection,
-                    searchByTitle
+                    searchByTitle,
+                    searchByTag
                 );
                 setPosts(response.posts);
                 setTotalPosts(response.totalCount);
