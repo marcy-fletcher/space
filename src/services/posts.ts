@@ -1,3 +1,5 @@
+// services/posts.ts
+
 import {supabase} from "./supabase.ts";
 import {Post} from "../types/post.ts";
 import {ReactionType} from "../types/reactions.ts";
@@ -68,6 +70,13 @@ interface PostDto {
   }>;
 }
 
+export interface PaginatedPostsResponse {
+  posts: Post[];
+  totalCount: number;
+  currentPage: number;
+  pageSize: number;
+  totalPages: number;
+}
 
 export function mapDtoToPost(dto: PostDto): Post {
   const safeMap = <T, U>(array: T[] | undefined | null, mapper: (item: T) => U): U[] => {
@@ -163,6 +172,53 @@ export class PostService {
     } catch (error) {
       console.error('Error fetching posts:', error);
       return [];
+    }
+  }
+
+  static async getPaginatedPosts(page: number = 1, pageSize: number = 9): Promise<PaginatedPostsResponse> {
+    try {
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+
+      const { data, error, count } = await supabase
+          .from('post_identity')
+          .select(`
+            *,
+            subscription_tiers (*),
+            post_content (
+              title,
+              preview,
+              preview_picture
+            ),
+            post_reaction_counts (
+              reaction_type,
+              count
+            ),
+            post_metadata (*)
+          `, { count: 'exact' })
+          .not('tier_id', 'is', null)
+          .order('created_at', { ascending: false })
+          .range(from, to);
+
+      if (error) {
+        console.error('Error fetching paginated posts:', error);
+        throw error;
+      }
+
+      const totalCount = count || 0;
+      const posts = data?.map(mapDtoToPost) || [];
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        posts,
+        totalCount,
+        currentPage: page,
+        pageSize,
+        totalPages
+      };
+    } catch (error) {
+      console.error('Error fetching paginated posts:', error);
+      throw error;
     }
   }
 
