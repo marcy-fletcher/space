@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import BlogPostCard from '../components/BlogPostCard';
 import LockedPostCard from '../components/LockedPostCard';
 import SearchBar from '../components/SearchBar';
@@ -27,6 +27,7 @@ const getInitialHideUnavailable = (): boolean => {
 
 const PostsList: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [appliedSearchTerm, setAppliedSearchTerm] = useState('');
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -42,7 +43,6 @@ const PostsList: React.FC = () => {
         localStorage.setItem('hideUnavailablePosts', JSON.stringify(hideUnavailable));
     }, [hideUnavailable]);
 
-    // Update sort direction when sortBy changes to maintain logical defaults
     useEffect(() => {
         if (sortBy === 'relevance') {
             setSortDirection('desc'); // Newest first by default
@@ -52,18 +52,24 @@ const PostsList: React.FC = () => {
     }, [sortBy]);
 
     useEffect(() => {
+        setCurrentPage(1);
+    }, [appliedSearchTerm, sortBy, sortDirection, hideUnavailable]);
+
+    useEffect(() => {
         const loadPosts = async () => {
             try {
                 setLoading(true);
-                // Determine ordering parameters based on sortBy state
+
                 const orderBy = sortBy === 'relevance' ? 'created_at' : 'title';
+                const searchByTitle = appliedSearchTerm.trim() || undefined;
 
                 const response = await PostService.getPaginatedPosts(
                     currentPage,
                     pageSize,
                     hideUnavailable,
                     orderBy,
-                    sortDirection
+                    sortDirection,
+                    searchByTitle
                 );
                 setPosts(response.posts);
                 setTotalPosts(response.totalCount);
@@ -76,49 +82,24 @@ const PostsList: React.FC = () => {
         };
 
         loadPosts();
-    }, [currentPage, pageSize, hideUnavailable, sortBy, sortDirection]); // Added sortDirection to dependencies
+    }, [currentPage, pageSize, hideUnavailable, sortBy, sortDirection, appliedSearchTerm]);
 
-    const filteredAndSortedPosts = useMemo(() => {
-        let result = posts;
+    const handleSearch = () => {
+        setAppliedSearchTerm(searchTerm);
+        setCurrentPage(1);
+    };
 
-        if (searchTerm.trim()) {
-            const lowerSearchTerm = searchTerm.toLowerCase();
-            result = result
-                .map((post): Post | undefined => {
-                    if (post == undefined || post.title === undefined) {
-                        return undefined;
-                    }
+    const handleClearSearch = () => {
+        setSearchTerm('');
+        setAppliedSearchTerm('');
+        setCurrentPage(1);
+    };
 
-                    const titleMatch = post.title?.toLowerCase().includes(lowerSearchTerm);
-                    const tagMatch = post.tags?.some(tag =>
-                        tag?.toLowerCase().includes(lowerSearchTerm)
-                    );
-
-                    return (titleMatch || tagMatch) ? post : undefined;
-                })
-                .filter((post): post is Post => post !== undefined);
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleSearch();
         }
-
-        // Client-side sorting as fallback (in case API sorting doesn't work as expected)
-        if (sortBy === 'alphabetical') {
-            result = [...result].sort((a, b) => {
-                const titleA = a.title || '';
-                const titleB = b.title || '';
-                const comparison = titleA.localeCompare(titleB);
-                return sortDirection === 'asc' ? comparison : -comparison;
-            });
-        } else if (sortBy === 'relevance') {
-            // For relevance (created_at), we assume the API already returns them in correct order
-            // but we can add client-side sorting as backup
-            result = [...result].sort((a, b) => {
-                const dateA = new Date(a.createdAt || 0).getTime();
-                const dateB = new Date(b.createdAt || 0).getTime();
-                return sortDirection === 'desc' ? dateB - dateA : dateA - dateB;
-            });
-        }
-
-        return result;
-    }, [posts, searchTerm, sortBy, sortDirection]); // Added sortDirection to dependencies
+    };
 
     const handleSortChange = (newSortBy: SortOption) => {
         setSortBy(newSortBy);
@@ -239,7 +220,15 @@ const PostsList: React.FC = () => {
                 </div>
             </header>
 
-            <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+            <div className="mb-8">
+                <SearchBar
+                    searchTerm={searchTerm}
+                    onSearchChange={setSearchTerm}
+                    onClear={handleClearSearch}
+                    onKeyPress={handleKeyPress}
+                    onSearch={handleSearch}
+                />
+            </div>
 
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm transition-all duration-300">
                 <div className="flex items-center gap-4">
@@ -299,10 +288,15 @@ const PostsList: React.FC = () => {
 
             <div className="mb-6 text-sm text-gray-600 dark:text-gray-400">
                 Showing {startItem}-{endItem} of {totalPosts} stories
+                {appliedSearchTerm && (
+                    <span className="ml-2 text-pink-500 dark:text-pink-400">
+                        (searching for "{appliedSearchTerm}")
+                    </span>
+                )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredAndSortedPosts.map((post, index) => (
+                {posts.map((post, index) => (
                     post?.title ? (
                         <BlogPostCard key={post.id || index} post={post} />
                     ) : (
@@ -402,7 +396,7 @@ const PostsList: React.FC = () => {
                 </div>
             )}
 
-            {filteredAndSortedPosts.length === 0 && searchTerm && (
+            {posts.length === 0 && appliedSearchTerm && (
                 <div className="text-center py-20">
                     <div className="text-6xl mb-4 transition-all duration-300">🔍</div>
                     <h3 className="text-2xl font-semibold text-white dark:text-gray-100 mb-2 font-serif transition-colors duration-300">
@@ -414,7 +408,7 @@ const PostsList: React.FC = () => {
                 </div>
             )}
 
-            {posts.length === 0 && !loading && !error && (
+            {posts.length === 0 && !loading && !error && !appliedSearchTerm && (
                 <div className="text-center py-20">
                     <div className="text-6xl mb-4 transition-all duration-300">📚</div>
                     <h3 className="text-2xl font-semibold text-white dark:text-gray-100 mb-2 font-serif transition-colors duration-300">

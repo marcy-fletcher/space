@@ -1,5 +1,3 @@
-// services/posts.ts
-
 import {supabase} from "./supabase.ts";
 import {Post} from "../types/post.ts";
 import {ReactionType} from "../types/reactions.ts";
@@ -180,7 +178,8 @@ export class PostService {
       pageSize: number = 9,
       filterUnavailable: boolean = false,
       orderBy: 'created_at' | 'title' = 'created_at',
-      orderDirection: 'asc' | 'desc' = 'desc'
+      orderDirection: 'asc' | 'desc' = 'desc',
+      searchTitle?: string // New parameter for title search
   ): Promise<PaginatedPostsResponse> {
     try {
       const from = (page - 1) * pageSize;
@@ -203,6 +202,13 @@ export class PostService {
         post_metadata (*)
       `, { count: 'exact' })
           .not('tier_id', 'is', null);
+
+      if (searchTitle && searchTitle.trim() !== '') {
+        query = query
+            .not('post_content', 'is', null)
+            .not('post_content.title', 'is', null)
+            .ilike('post_content.title', `%${searchTitle.trim()}%`);
+      }
 
       if (orderBy === 'created_at') {
         query = query.order('created_at', { ascending: orderDirection === 'asc' });
