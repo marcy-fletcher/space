@@ -17,7 +17,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                                                  onSearch,
                                                  onClear,
                                                  onKeyPress,
-                                                 placeholder = "Search by title or tags..."
+                                                 placeholder = "Search by title or #tag..."
                                              }) => {
     const handleClear = () => {
         onSearchChange('');
