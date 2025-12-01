@@ -7,7 +7,7 @@ const CreatePostPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-    const handleSubmit = async (postData: Omit<Post, 'id' | 'createdAt' | 'subscription' | 'reactions'>) => {
+    const handleSubmit = async (postData: Omit<Post, 'id' | 'createdAt' | 'subscription' | 'reactions' | 'comments'>) => {
         setIsLoading(true);
         setMessage(null);
 
