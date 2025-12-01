@@ -45,6 +45,18 @@ interface PostDto {
       type: string;
     }>;
   };
+  post_comments: Array<{
+    id: number;
+    user_id: string;
+    parent_id: number;
+    content: string;
+    created_at: string;
+    updated_at: string;
+    user_profiles: {
+      id: string;
+      name: string;
+    }
+  }>;
   post_reaction_counts: Array<{
     count: number;
     reaction_type: ReactionType;
@@ -105,6 +117,29 @@ export function mapDtoToPost(dto: PostDto): Post {
     }
   }));
 
+  const comments = safeMap(dto.post_comments, comment => ({
+    id: comment.id,
+    userId: comment.user_id,
+    userName: comment.user_profiles?.name ?? '',
+    parentId: comment.parent_id,
+    content: comment.content,
+    createdAt: comment.created_at,
+    updatedAt: comment.updated_at
+  })).sort((a, b) => {
+
+    const aRoot = a.parentId == null;
+    const bRoot = b.parentId == null;
+
+    if (aRoot && !bRoot) return -1;
+    if (!aRoot && bRoot) return 1;
+
+    if (aRoot && bRoot) {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    }
+
+    return 0;
+  });
+
   return {
     id: dto.id,
     title: dto.post_content?.title,
@@ -131,48 +166,12 @@ export function mapDtoToPost(dto: PostDto): Post {
       requiredTierTitle: dto.subscription_tiers?.title ?? ''
     },
     relatedPosts: relatedPosts,
-    reactions: reactions
+    reactions: reactions,
+    comments: comments
   };
 }
 
 export class PostService {
-  static async getAllPosts(): Promise<Post[]> {
-    try {
-      const { data, error } = await supabase
-          .from('post_identity')
-          .select(`
-            *,
-            subscription_tiers (*),
-            post_content (
-              title,
-              preview,
-              preview_picture
-            ),
-            post_reaction_counts (
-              reaction_type,
-              count
-            ),
-            post_metadata (*)
-          `)
-          .not('tier_id', 'is', null)
-          .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('RPC Error:', error);
-        return [];
-      }
-
-      if (!data || data.length === 0) {
-        return [];
-      }
-
-      return data.map(mapDtoToPost);
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-      return [];
-    }
-  }
-
   static async getPaginatedPosts(
       page: number = 1,
       pageSize: number = 9,
@@ -269,6 +268,10 @@ export class PostService {
           post_content (*),
           post_metadata (*),
           post_references (*),
+          post_comments (
+            *,
+            user_profiles(*)
+          ),
           related_posts!related_posts_post_id_fkey (
             related_id,
             post_identity:post_identity!related_posts_related_id_fkey (
@@ -283,8 +286,8 @@ export class PostService {
             )
           )
         `)
-          .eq('id', id)
-          .single();
+        .eq('id', id)
+        .single();
 
       if (error) {
         console.error('Error fetching post by ID:', error);
@@ -295,7 +298,10 @@ export class PostService {
         return null;
       }
 
-      return mapDtoToPost(data);
+      const post = mapDtoToPost(data);
+      console.log('Fetched post', post);
+
+      return post;
     } catch (error) {
       console.error('Error fetching post by ID:', error);
       return null;

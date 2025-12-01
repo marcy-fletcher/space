@@ -1,4 +1,6 @@
 // Some data might be null if user has no access to the post
+import {Comment} from "./comments.ts";
+
 export interface Post {
     id: string;
     title?: string;
@@ -53,4 +55,5 @@ export interface Post {
         hot: number;
         sequel_request: number;
     }
+    comments: Comment[]
 }

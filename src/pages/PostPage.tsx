@@ -10,6 +10,7 @@ import StoryHeader from "../components/story/StoryHeader.tsx";
 import StoryFooter from "../components/story/StoryFooter.tsx";
 import RelatedPostsSection from "../components/story/RelatedPostsSection.tsx";
 import ReferencesSection from "../components/story/ReferencesSection.tsx";
+import CommentSection from "../components/story/comments/CommentSection.tsx";
 
 const PostPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -162,6 +163,31 @@ const PostPage: React.FC = () => {
 
                 <StoryFooter />
             </article>
+
+            <CommentSection
+                postId={post.id}
+                initialComments={post.comments}
+                onCommentAdded={(comment) => {
+                    setPost(prev => prev ? {
+                        ...prev,
+                        comments: [comment, ...prev.comments]
+                    } : undefined);
+                }}
+                onCommentUpdated={(updatedComment) => {
+                    setPost(prev => prev ? {
+                        ...prev,
+                        comments: prev.comments.map(c =>
+                            c.id === updatedComment.id ? updatedComment : c
+                        )
+                    } : undefined);
+                }}
+                onCommentDeleted={(commentId) => {
+                    setPost(prev => prev ? {
+                        ...prev,
+                        comments: prev.comments.filter(c => c.id !== commentId)
+                    } : undefined);
+                }}
+            />
 
             <ReferencesSection references={post.references} />
             <RelatedPostsSection relatedPosts={post.relatedPosts} />
