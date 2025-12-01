@@ -9,17 +9,14 @@ import {
     faBars,
     faTimes,
     faInfoCircle,
-    faBug,
     faHome,
     faBolt,
     faLightbulb,
     faHourglass
 } from '@fortawesome/free-solid-svg-icons';
-import FeedbackModal from "./FeedbackModal.tsx";
 
 const Layout: React.FC = () => {
     const { isAuthenticated, loading } = useAuth();
-    const [showFeedbackModal, setShowFeedbackModal] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
@@ -200,28 +197,12 @@ const Layout: React.FC = () => {
                 </div>
             </footer>
 
-            <FeedbackModal
-                isOpen={showFeedbackModal}
-                onClose={() => setShowFeedbackModal(false)}
-            />
-
             {isMobileMenuOpen && (
                 <div
                     className="fixed inset-0 bg-black/20 dark:bg-black/40 z-40 md:hidden"
                     onClick={closeMobileMenu}
                 />
             )}
-
-            <button
-                onClick={() => setShowFeedbackModal(true)}
-                className="fixed bottom-6 right-6 z-40 w-14 h-14 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-110 flex items-center justify-center group"
-                aria-label="Send Feedback"
-            >
-                <FontAwesomeIcon icon={faBug} className="w-6 h-6" />
-                <span className="absolute right-full mr-3 px-3 py-1 bg-gray-900 dark:bg-gray-700 text-white text-sm rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-                Report Issue
-            </span>
-            </button>
         </div>
     );
 };
