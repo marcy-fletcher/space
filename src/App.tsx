@@ -15,6 +15,7 @@ import SchedulePage from "./pages/SchedulePage.tsx";
 import RegisterPage from "./pages/RegisterPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import AgeVerification from "./components/AgeVerification.tsx";
+import VisitTracker from "./components/VisitTracker.tsx";
 
 const AppContent: React.FC = () => {
     return (
@@ -29,6 +30,7 @@ const AppContent: React.FC = () => {
                         <Route path="schedule" element={ <SchedulePage /> } />
                         <Route path="register" element={ <RegisterPage /> } />
                         <Route path="login" element={ <LoginPage /> } />
+                        <Route path="track" element={<VisitTracker />} />
                         <Route path="create-story/" element={
                             <ProtectedRoute children={<CreatePostPage />} requiredTier={999} />
                         } />

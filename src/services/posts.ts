@@ -246,8 +246,6 @@ export class PostService {
       const posts = data?.map(mapDtoToPost) || [];
       const totalPages = Math.ceil(totalCount / pageSize);
 
-      console.log(data);
-
       return {
         posts,
         totalCount,
