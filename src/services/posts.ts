@@ -298,10 +298,7 @@ export class PostService {
         return null;
       }
 
-      const post = mapDtoToPost(data);
-      console.log('Fetched post', post);
-
-      return post;
+      return mapDtoToPost(data);
     } catch (error) {
       console.error('Error fetching post by ID:', error);
       return null;
