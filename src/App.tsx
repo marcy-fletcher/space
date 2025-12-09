@@ -16,6 +16,7 @@ import RegisterPage from "./pages/RegisterPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import AgeVerification from "./components/AgeVerification.tsx";
 import VisitTracker from "./components/VisitTracker.tsx";
+import ReactionsListPage from "./pages/ReactionsListPage.tsx";
 
 const AppContent: React.FC = () => {
     return (
@@ -31,7 +32,10 @@ const AppContent: React.FC = () => {
                         <Route path="register" element={ <RegisterPage /> } />
                         <Route path="login" element={ <LoginPage /> } />
                         <Route path="track" element={<VisitTracker />} />
-                        <Route path="create-story/" element={
+                        <Route path="reactions" element={
+                            <ProtectedRoute children={<ReactionsListPage />} requiredTier={999} />
+                        } />
+                        <Route path="create-story" element={
                             <ProtectedRoute children={<CreatePostPage />} requiredTier={999} />
                         } />
                         <Route path="about" element={<AboutPage />} />

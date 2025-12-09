@@ -18,3 +18,13 @@ export interface ToggleReactionResult extends PostReactions {
     action: 'added' | 'removed';
     reaction_type: ReactionType;
 }
+
+
+export interface PostReaction {
+    postId: string;
+    userId: string;
+    reactionType: ReactionType;
+    createdAt: string;
+    postTitle: string;
+    userName: string;
+}
