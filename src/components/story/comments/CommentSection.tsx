@@ -6,6 +6,7 @@ import { useAuth } from "../../../contexts/AuthContext.tsx";
 import { CommentService } from "../../../services/comments.ts";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComment, faCommentDots } from '@fortawesome/free-solid-svg-icons';
+import {useDebugLog} from "../../../hooks/useDebugLog.ts";
 
 interface CommentSectionProps {
     postId: string;
@@ -28,6 +29,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     const [error, setError] = useState<string | null>(null);
     const [replyingTo, setReplyingTo] = useState<number | null>(null);
     const [editingComment, setEditingComment] = useState<number | null>(null);
+
+    const { debugLog } = useDebugLog();
 
     const buildCommentTree = (commentsList: Comment[]): Comment[] => {
         const commentMap = new Map<number, Comment & { replies: Comment[] }>();
@@ -81,6 +84,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
             setReplyingTo(null);
             onCommentAdded?.(commentWithUser);
+            debugLog('comment_added', { postId: postId })
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to add comment');
         } finally {
@@ -99,6 +103,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
             setEditingComment(null);
             onCommentUpdated?.(updatedComment);
+
+            debugLog('comment_updated', { postId: postId })
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to update comment');
         } finally {
@@ -121,6 +127,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             ));
 
             onCommentDeleted?.(commentId);
+
+            debugLog('comment_deleted', { postId: postId })
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to delete comment');
         } finally {
