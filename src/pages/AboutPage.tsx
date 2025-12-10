@@ -1,11 +1,18 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import ProfileHeader from "../components/about-page/ProfileHeader.tsx";
 import ContactSection from "../components/about-page/ContactSection.tsx";
 import CommissionsSection from "../components/about-page/CommissionsSection.tsx";
 import AccountSection from "../components/about-page/AccountSection.tsx";
 import LibrarySection from "../components/about-page/LibrarySection.tsx";
+import {useDebugLog} from "../hooks/useDebugLog.ts";
 
 const AboutPage: React.FC = () => {
+    const { debugLog } = useDebugLog();
+
+    useEffect(() => {
+        debugLog('load_about')
+    }, []);
+
     return (
         <div className="min-h-screen text-gray-800 dark:text-gray-200 transition-colors">
             <div className="hidden lg:block">

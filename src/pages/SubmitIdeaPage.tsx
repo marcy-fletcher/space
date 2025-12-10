@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IdeaService } from "../services/ideas.ts";
+import {useDebugLog} from "../hooks/useDebugLog.ts";
 
 const SubmitIdeaPage: React.FC = () => {
     const navigate = useNavigate();
@@ -8,8 +9,14 @@ const SubmitIdeaPage: React.FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
+    const { debugLog } = useDebugLog();
+
     const IDEA_CHARACTER_LIMIT = 2000;
     const isIdeaValid = formData.idea.trim() && formData.idea.length <= IDEA_CHARACTER_LIMIT;
+
+    useEffect(() => {
+        debugLog('load_submit_idea')
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

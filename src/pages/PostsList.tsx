@@ -4,6 +4,7 @@ import LockedPostCard from '../components/LockedPostCard';
 import SearchBar from '../components/SearchBar';
 import { PostService } from '../services/posts';
 import { Post } from "../types/post.ts";
+import {useDebugLog} from "../hooks/useDebugLog.ts";
 
 type SortOption = 'relevance' | 'alphabetical';
 type SortDirection = 'asc' | 'desc';
@@ -34,6 +35,7 @@ const PostsList: React.FC = () => {
     const [sortBy, setSortBy] = useState<SortOption>('relevance');
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [hideUnavailable, setHideUnavailable] = useState<boolean>(getInitialHideUnavailable);
+    const { debugLog } = useDebugLog();
 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPosts, setTotalPosts] = useState(0);
@@ -73,6 +75,15 @@ const PostsList: React.FC = () => {
                 );
                 setPosts(response.posts);
                 setTotalPosts(response.totalCount);
+
+                debugLog('loading_posts', {
+                    currentPage,
+                    pageSize,
+                    hideUnavailable,
+                    orderBy,
+                    sortDirection,
+                    searchTerm
+                });
             } catch (err) {
                 setError('Failed to load stories. Please try again later.');
                 console.error('Error loading posts:', err);

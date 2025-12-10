@@ -1,10 +1,17 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { faDeviantart, faDiscord } from '@fortawesome/free-brands-svg-icons';
+import {useDebugLog} from "../hooks/useDebugLog.ts";
 const SubscriptionsPage: React.FC = () => {
     const [showContactModal, setShowContactModal] = useState(false);
     const [copyFeedback, setCopyFeedback] = useState('');
+
+    const { debugLog } = useDebugLog();
+
+    useEffect(() => {
+        debugLog('load_subscriptions')
+    }, []);
 
     const copyDiscordTag = () => {
         navigator.clipboard.writeText('@masha.fin');

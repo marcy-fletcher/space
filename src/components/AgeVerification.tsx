@@ -1,8 +1,13 @@
 import React from "react";
+import {useDebugLog} from "../hooks/useDebugLog.ts";
 
 const AgeVerification: React.FC = () => {
+
+    const { debugLog } = useDebugLog();
+
     const handleAgeConfirm = async () => {
         localStorage.setItem('ageVerified', 'true');
+        await debugLog('age_verified');
         window.location.reload();
     };
 

@@ -17,11 +17,14 @@ import { WritingProject } from "../types/schedule.ts";
 import { ScheduleService } from '../services/schedule';
 import LoadingSpinner from '../components/story/LoadingSpinner.tsx';
 import ErrorState from '../components/story/ErrorState.tsx';
+import {useDebugLog} from "../hooks/useDebugLog.ts";
 
 const SchedulePage: React.FC = () => {
     const [projects, setProjects] = useState<WritingProject[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    const { debugLog } = useDebugLog();
 
     useEffect(() => {
         const loadProjects = async () => {
@@ -31,6 +34,8 @@ const SchedulePage: React.FC = () => {
 
                 const projectsData = await ScheduleService.getWritingProjects();
                 setProjects(projectsData);
+
+                debugLog('load_schedule');
             } catch (err) {
                 console.error('Error loading writing projects:', err);
                 setError('Failed to load writing schedule. Please try again later.');

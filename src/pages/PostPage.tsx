@@ -11,6 +11,7 @@ import StoryFooter from "../components/story/StoryFooter.tsx";
 import RelatedPostsSection from "../components/story/RelatedPostsSection.tsx";
 import ReferencesSection from "../components/story/ReferencesSection.tsx";
 import CommentSection from "../components/story/comments/CommentSection.tsx";
+import {useDebugLog} from "../hooks/useDebugLog.ts";
 
 const PostPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -20,6 +21,8 @@ const PostPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [, setHasAgreedToWarnings] = useState(false);
     const [showWarningModal, setShowWarningModal] = useState(false);
+
+    const { debugLog } = useDebugLog();
 
     useEffect(() => {
         const loadStoryData = async () => {
@@ -62,6 +65,11 @@ const PostPage: React.FC = () => {
                         setHasAgreedToWarnings(true);
                     }
                 }
+
+                debugLog('loading_post', {
+                    post_id: id,
+                    post_title: postData.title
+                })
             } catch (err) {
                 setError('Failed to load story. Please try again later.');
                 console.error('Error loading story:', err);

@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import {PostReactions, ReactionType} from "../../types/reactions.ts";
 import {reactionService} from "../../services/reactions.ts";
 import {ReactionButton} from "./reactions/ReactionButton.tsx";
+import {useDebugLog} from "../../hooks/useDebugLog.ts";
 
 export const ReactionsSection: React.FC<{ postId: string }> = ({ postId }) => {
     const [reactions, setReactions] = useState<PostReactions | null>(null);
     const [loading, setLoading] = useState(true);
+
+    const { debugLog } = useDebugLog();
 
     useEffect(() => {
         const fetchReactions = async () => {
@@ -27,6 +30,9 @@ export const ReactionsSection: React.FC<{ postId: string }> = ({ postId }) => {
             const result = await reactionService.toggleReaction(postId, reactionType);
             console.log(result);
             setReactions(result);
+
+            const action = result.action;
+            debugLog('reaction_handle', { postId, reactionType, action});
         } catch (error) {
             console.error('Error toggling reaction:', error);
         }
