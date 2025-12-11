@@ -11,7 +11,6 @@ import CreatePostPage from "./pages/CreatePostPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import SubscriptionsPage from "./pages/SubscriptionsPage.tsx";
 import SubmitIdeaPage from "./pages/SubmitIdeaPage.tsx";
-import SchedulePage from "./pages/SchedulePage.tsx";
 import RegisterPage from "./pages/RegisterPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import AgeVerification from "./components/AgeVerification.tsx";
