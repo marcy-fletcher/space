@@ -6,7 +6,6 @@ import toast from 'react-hot-toast';
 import LoadingSpinner from '../components/story/LoadingSpinner';
 import {useAuth} from "../contexts/AuthContext.tsx";
 import {useDebugLog} from "../hooks/useDebugLog.ts";
-import {PostService} from "../services/posts.ts";
 
 export function RegisterPage() {
     const { signUp } = useAuth();
