@@ -32,7 +32,7 @@ export const ReactionsSection: React.FC<{ postId: string }> = ({ postId }) => {
             setReactions(result);
 
             const action = result.action;
-            debugLog('reaction_handle', { postId, reactionType, action});
+            debugLog('reaction_handle', { post_id: postId, reaction_type:reactionType, action});
         } catch (error) {
             console.error('Error toggling reaction:', error);
         }

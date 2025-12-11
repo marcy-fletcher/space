@@ -84,7 +84,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
             setReplyingTo(null);
             onCommentAdded?.(commentWithUser);
-            debugLog('comment_added', { postId: postId })
+            debugLog('comment_added', { post_id: postId })
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to add comment');
         } finally {
@@ -104,7 +104,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             setEditingComment(null);
             onCommentUpdated?.(updatedComment);
 
-            debugLog('comment_updated', { postId: postId })
+            debugLog('comment_updated', { post_id: postId })
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to update comment');
         } finally {
@@ -128,7 +128,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
             onCommentDeleted?.(commentId);
 
-            debugLog('comment_deleted', { postId: postId })
+            debugLog('comment_deleted', { post_id: postId })
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to delete comment');
         } finally {
