@@ -24,7 +24,7 @@ const SchedulePage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const { debugLog } = useDebugLog();
+    const { debugPageLoad } = useDebugLog();
 
     useEffect(() => {
         const loadProjects = async () => {
@@ -35,7 +35,7 @@ const SchedulePage: React.FC = () => {
                 const projectsData = await ScheduleService.getWritingProjects();
                 setProjects(projectsData);
 
-                debugLog('load_schedule');
+                debugPageLoad('schedule');
             } catch (err) {
                 console.error('Error loading writing projects:', err);
                 setError('Failed to load writing schedule. Please try again later.');

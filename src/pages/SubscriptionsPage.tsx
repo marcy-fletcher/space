@@ -7,10 +7,10 @@ const SubscriptionsPage: React.FC = () => {
     const [showContactModal, setShowContactModal] = useState(false);
     const [copyFeedback, setCopyFeedback] = useState('');
 
-    const { debugLog } = useDebugLog();
+    const { debugPageLoad } = useDebugLog();
 
     useEffect(() => {
-        debugLog('load_subscriptions')
+        debugPageLoad('subscriptions')
     }, []);
 
     const copyDiscordTag = () => {

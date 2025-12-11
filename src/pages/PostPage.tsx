@@ -22,7 +22,7 @@ const PostPage: React.FC = () => {
     const [, setHasAgreedToWarnings] = useState(false);
     const [showWarningModal, setShowWarningModal] = useState(false);
 
-    const { debugLog } = useDebugLog();
+    const { debugPageLoad } = useDebugLog();
 
     useEffect(() => {
         const loadStoryData = async () => {
@@ -66,7 +66,7 @@ const PostPage: React.FC = () => {
                     }
                 }
 
-                debugLog('loading_post', {
+                debugPageLoad('post', {
                     post_id: id,
                     post_title: postData.title
                 })

@@ -9,13 +9,13 @@ const SubmitIdeaPage: React.FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-    const { debugLog } = useDebugLog();
+    const { debugPageLoad } = useDebugLog();
 
     const IDEA_CHARACTER_LIMIT = 2000;
     const isIdeaValid = formData.idea.trim() && formData.idea.length <= IDEA_CHARACTER_LIMIT;
 
     useEffect(() => {
-        debugLog('load_submit_idea')
+        debugPageLoad('submit_idea')
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {

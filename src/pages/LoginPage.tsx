@@ -38,7 +38,7 @@ export function LoginPage() {
         try {
             await signIn(formData.email, formData.password);
             toast.success('Welcome back!');
-            debugLog('sign_in');
+            debugLog('login');
             navigate('/');
         } catch (error: any) {
             toast.error(error.message || 'Failed to sign in');

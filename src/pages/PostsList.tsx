@@ -35,7 +35,7 @@ const PostsList: React.FC = () => {
     const [sortBy, setSortBy] = useState<SortOption>('relevance');
     const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
     const [hideUnavailable, setHideUnavailable] = useState<boolean>(getInitialHideUnavailable);
-    const { debugLog } = useDebugLog();
+    const { debugPageLoad } = useDebugLog();
 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPosts, setTotalPosts] = useState(0);
@@ -76,13 +76,13 @@ const PostsList: React.FC = () => {
                 setPosts(response.posts);
                 setTotalPosts(response.totalCount);
 
-                debugLog('loading_posts', {
-                    currentPage,
-                    pageSize,
-                    hideUnavailable,
-                    orderBy,
-                    sortDirection,
-                    searchTerm
+                debugPageLoad('posts_list', {
+                    current_page: currentPage,
+                    page_size: pageSize,
+                    hide_unavailable: hideUnavailable,
+                    order_by: orderBy,
+                    sort_direction: sortDirection,
+                    search_term: searchTerm
                 });
             } catch (err) {
                 setError('Failed to load stories. Please try again later.');

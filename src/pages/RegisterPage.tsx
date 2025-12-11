@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faUserPlus, faEnvelope, faLock, faUser, faCheckCircle, faEnvelopeOpen } from '@fortawesome/free-solid-svg-icons';
@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import LoadingSpinner from '../components/story/LoadingSpinner';
 import {useAuth} from "../contexts/AuthContext.tsx";
 import {useDebugLog} from "../hooks/useDebugLog.ts";
+import {PostService} from "../services/posts.ts";
 
 export function RegisterPage() {
     const { signUp } = useAuth();
@@ -18,7 +19,11 @@ export function RegisterPage() {
     });
     const [loading, setLoading] = useState(false);
     const [registrationSuccess, setRegistrationSuccess] = useState(false);
-    const { debugLog } = useDebugLog();
+    const { debugLog, debugPageLoad } = useDebugLog();
+
+    useEffect(() => {
+        debugPageLoad('registration');
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;

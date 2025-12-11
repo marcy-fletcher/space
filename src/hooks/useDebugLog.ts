@@ -1,6 +1,11 @@
 import {supabase} from "../services/supabase.ts";
 
 export const useDebugLog = () => {
+
+    const debugPageLoad = async (page: string, metadata = {}) => {
+        await debugLog('page_load', {page: page, ...metadata});
+    }
+
     const debugLog = async (action: string, metadata = {}) => {
         try {
             const { error } = await supabase.rpc('debug_log', {
@@ -23,5 +28,5 @@ export const useDebugLog = () => {
         }
     }
 
-    return { debugLog }
+    return { debugLog, debugPageLoad }
 }

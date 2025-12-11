@@ -7,10 +7,10 @@ import LibrarySection from "../components/about-page/LibrarySection.tsx";
 import {useDebugLog} from "../hooks/useDebugLog.ts";
 
 const AboutPage: React.FC = () => {
-    const { debugLog } = useDebugLog();
+    const { debugPageLoad } = useDebugLog();
 
     useEffect(() => {
-        debugLog('load_about')
+        debugPageLoad('about');
     }, []);
 
     return (
