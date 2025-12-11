@@ -5,6 +5,7 @@ import { faArrowLeft, faUserPlus, faEnvelope, faLock, faUser, faCheckCircle, faE
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../components/story/LoadingSpinner';
 import {useAuth} from "../contexts/AuthContext.tsx";
+import {useDebugLog} from "../hooks/useDebugLog.ts";
 
 export function RegisterPage() {
     const { signUp } = useAuth();
@@ -17,6 +18,7 @@ export function RegisterPage() {
     });
     const [loading, setLoading] = useState(false);
     const [registrationSuccess, setRegistrationSuccess] = useState(false);
+    const { debugLog } = useDebugLog();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -48,6 +50,7 @@ export function RegisterPage() {
         try {
             await signUp(formData.email, formData.password, formData.fullName);
             setRegistrationSuccess(true);
+            debugLog('sign_up');
         } catch (error: any) {
             toast.error(error.message || 'Failed to create account');
         } finally {

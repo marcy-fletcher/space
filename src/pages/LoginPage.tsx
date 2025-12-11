@@ -5,6 +5,7 @@ import { faArrowLeft, faSignInAlt, faEnvelope, faLock, faUserCircle } from '@for
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../components/story/LoadingSpinner';
 import {useAuth} from "../contexts/AuthContext.tsx";
+import {useDebugLog} from "../hooks/useDebugLog.ts";
 
 export function LoginPage() {
     const { signIn } = useAuth();
@@ -14,6 +15,8 @@ export function LoginPage() {
         password: ''
     });
     const [loading, setLoading] = useState(false);
+
+    const { debugLog } = useDebugLog();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -35,6 +38,7 @@ export function LoginPage() {
         try {
             await signIn(formData.email, formData.password);
             toast.success('Welcome back!');
+            debugLog('sign_in');
             navigate('/');
         } catch (error: any) {
             toast.error(error.message || 'Failed to sign in');
