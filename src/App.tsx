@@ -28,7 +28,6 @@ const AppContent: React.FC = () => {
                         <Route path="story/:id" element={<PostPage />} />
                         <Route path="upgrade" element={ <SubscriptionsPage /> } />
                         <Route path="submit-idea" element={ <SubmitIdeaPage /> } />
-                        <Route path="schedule" element={ <SchedulePage /> } />
                         <Route path="register" element={ <RegisterPage /> } />
                         <Route path="login" element={ <LoginPage /> } />
                         <Route path="track" element={<VisitTracker />} />
