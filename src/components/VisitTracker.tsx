@@ -21,6 +21,7 @@ const VisitTracker: React.FC = () => {
                 }
 
                 await visitService.trackVisit(linkName);
+
                 setIsTracking(false);
 
                 navigate('/');
