@@ -7,8 +7,8 @@ const AgeVerification: React.FC = () => {
 
     const handleAgeConfirm = async () => {
         localStorage.setItem('ageVerified', 'true');
-        debugLog('age_verified');
         window.location.reload();
+        debugLog('age_verified');
     };
 
     return (
