@@ -18,7 +18,8 @@ export class AuthService {
       options: {
         data: {
           full_name: fullName
-        }
+        },
+        emailRedirectTo: 'https://marcy-fletcher.github.io/space/'
       }
     })
 
