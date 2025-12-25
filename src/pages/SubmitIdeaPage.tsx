@@ -73,6 +73,7 @@ const SubmitIdeaPage: React.FC = () => {
                     </p>
                 </div>
 
+                {/* Status Alert */}
                 {submitStatus !== 'idle' && (
                     <div className={`p-3 rounded-lg mb-6 border ${
                         submitStatus === 'success'
@@ -83,8 +84,10 @@ const SubmitIdeaPage: React.FC = () => {
                     </div>
                 )}
 
+                {/* Form Card */}
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
                     <form onSubmit={handleSubmit} className="space-y-5">
+                        {/* Nickname Field */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Nickname <span className="text-gray-400 text-xs">(optional)</span>
@@ -99,6 +102,7 @@ const SubmitIdeaPage: React.FC = () => {
                             />
                         </div>
 
+                        {/* Author Toggle */}
                         <label className="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer">
                             <input
                                 type="checkbox"
@@ -112,6 +116,7 @@ const SubmitIdeaPage: React.FC = () => {
                             </span>
                         </label>
 
+                        {/* Idea Field */}
                         <div>
                             <div className="flex justify-between items-center mb-2">
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -138,16 +143,19 @@ const SubmitIdeaPage: React.FC = () => {
                             />
                         </div>
 
+                        {/* Tips */}
                         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
                             <p className="text-xs text-blue-700 dark:text-blue-300">
                                 💡 <strong>Tip:</strong> Include character dynamics, settings, or specific scenarios for better context.
                             </p>
                         </div>
 
+                        {/* Note */}
                         <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
                             <p>I welcome any ideas but don't commit to writing them. Your idea may or may not appeal to me.</p>
                         </div>
 
+                        {/* Actions */}
                         <div className="flex gap-3 pt-2">
                             <button
                                 type="button"
