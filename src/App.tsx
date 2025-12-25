@@ -17,6 +17,7 @@ import AgeVerification from "./components/AgeVerification.tsx";
 import VisitTracker from "./components/VisitTracker.tsx";
 import ReactionsListPage from "./pages/ReactionsListPage.tsx";
 import IPBlocker from "./components/IPBlocker.tsx";
+import SubscriptionRequestPage from "./pages/SubscriptionRequestPage.tsx";
 
 const AppContent: React.FC = () => {
     return (
@@ -31,6 +32,7 @@ const AppContent: React.FC = () => {
                         <Route path="register" element={ <RegisterPage /> } />
                         <Route path="login" element={ <LoginPage /> } />
                         <Route path="track" element={<VisitTracker />} />
+                        <Route path="subscriptions/request" element={<SubscriptionRequestPage />} />
                         <Route path="reactions" element={
                             <ProtectedRoute children={<ReactionsListPage />} requiredTier={999} />
                         } />
