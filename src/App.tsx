@@ -16,6 +16,7 @@ import LoginPage from "./pages/LoginPage.tsx";
 import AgeVerification from "./components/AgeVerification.tsx";
 import VisitTracker from "./components/VisitTracker.tsx";
 import ReactionsListPage from "./pages/ReactionsListPage.tsx";
+import IPBlocker from "./components/IPBlocker.tsx";
 
 const AppContent: React.FC = () => {
     return (
@@ -96,9 +97,11 @@ const App: React.FC = () => {
     }
 
     return (
-        <ThemeProvider>
-            {!isVerified ? <AgeVerification /> : <AppContent />}
-        </ThemeProvider>
+        <IPBlocker blockedCountries={['RU', 'RUS', '643']}>
+            <ThemeProvider>
+                {!isVerified ? <AgeVerification /> : <AppContent />}
+            </ThemeProvider>
+        </IPBlocker>
     );
 };
 
