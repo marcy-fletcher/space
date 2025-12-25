@@ -78,12 +78,9 @@ const TierCard: React.FC<TierCardProps> = ({
     };
 
     const shouldShowButton = userLevel !== undefined && userLevel < level;
-    const isButtonDisabled = userLevel === undefined;
-
-    console.log('user level', userLevel);
 
     const handleRequestClick = () => {
-        if (onRequestTier && !isButtonDisabled && shouldShowButton) {
+        if (onRequestTier && shouldShowButton) {
             onRequestTier(id);
         }
     };
@@ -97,11 +94,8 @@ const TierCard: React.FC<TierCardProps> = ({
                 {shouldShowButton && (
                     <button
                         onClick={handleRequestClick}
-                        disabled={isButtonDisabled}
                         className={`px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                            isButtonDisabled
-                                ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed text-gray-500 dark:text-gray-400'
-                                : colorClasses[color].button
+                            colorClasses[color].button
                         }`}
                     >
                         Request
