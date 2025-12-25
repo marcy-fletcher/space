@@ -40,7 +40,7 @@ const Layout: React.FC = () => {
     const navLinks = [
         { to: "/", label: "Stories", icon: faHome },
         { to: "/submit-idea", label: "Submit idea", icon: faLightbulb },
-        { to: "/upgrade", label: "Subscriptions", icon: faBolt },
+        { to: "/upgrade", label: "Free Subscriptions", icon: faBolt },
         { to: "/about", label: "About me", icon: faInfoCircle }
     ];
 
