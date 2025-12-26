@@ -7,6 +7,7 @@ import UseInviteForm from "../components/invites-page/UseInviteForm.tsx"; // Imp
 import ErrorAlert from "../components/invites-page/ErrorAlert.tsx";
 import InviteTable from "../components/invites-page/InviteTable.tsx";
 import BackButton from "../components/invites-page/BackButton.tsx";
+import {useDebugLog} from "../hooks/useDebugLog.ts";
 
 const InvitesPage: React.FC = () => {
     const [invites, setInvites] = useState<Invite[]>([]);
@@ -15,6 +16,8 @@ const InvitesPage: React.FC = () => {
     const [usingInvite, setUsingInvite] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [creationError, setCreationError] = useState<string | null>(null);
+
+    const { debugLog, debugPageLoad } = useDebugLog();
 
     const loadInvites = async () => {
         setLoading(true);
@@ -30,19 +33,21 @@ const InvitesPage: React.FC = () => {
     };
 
     useEffect(() => {
+        debugPageLoad('invites');
         loadInvites();
     }, []);
 
     const handleCreateInvite = async () => {
         setCreating(true);
-        setCreationError(null); // Clear any previous error
+        setCreationError(null);
+
         try {
             const result = await InviteService.createInvite();
             if (result.success) {
                 setInvites(prev => [result.invite!, ...prev]);
+                debugLog('invite_created', { key: result.invite!.key });
             }
             else {
-                // Display error with result.message
                 setCreationError(result.message || 'Failed to create invite');
             }
         } catch (error) {
@@ -61,6 +66,7 @@ const InvitesPage: React.FC = () => {
 
             if (success) {
                 await loadInvites();
+                debugLog('invite_used', { key: key });
             }
             return result;
         } catch (error) {
@@ -78,6 +84,7 @@ const InvitesPage: React.FC = () => {
     const handleExpireInvite = async (key: string) => {
         const success = await InviteService.expireInvite(key);
         if (success) {
+            debugLog('invite_expired', { key: key });
             setInvites(prev =>
                 prev.map(inv =>
                     inv.key === key
