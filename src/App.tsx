@@ -32,9 +32,7 @@ const AppContent: React.FC = () => {
                         <Route path="register" element={ <RegisterPage /> } />
                         <Route path="login" element={ <LoginPage /> } />
                         <Route path="track" element={<VisitTracker />} />
-                        <Route path="invites" element={
-                            <ProtectedRoute children={<InvitesPage />} requiredTier={1} />
-                        } />
+                        <Route path="invites" element={ <InvitesPage /> } />
                         <Route path="reactions" element={
                             <ProtectedRoute children={<ReactionsListPage />} requiredTier={999} />
                         } />
