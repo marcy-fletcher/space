@@ -1,1 +1,0 @@
-import{a as f}from"./vendor-font-awesome-fb8PRCmj.js";import{l as i,f as r}from"./index-B0_0Fqcp.js";function g(o,t,s=!0){const n=JSON.stringify(t);f.useEffect(()=>{(async()=>s&&await i(r.pageVisit,{...t,pageName:o}))()},[o,n,s])}export{g as u};
