@@ -1,110 +1,151 @@
-import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './contexts/AuthContext';
-import { ThemeProvider } from './contexts/ThemeContext';
-import Layout from './components/Layout';
-import PostsList from './pages/PostsList.tsx';
-import PostPage from './pages/PostPage.tsx';
-import AboutPage from "./pages/AboutPage.tsx";
-import CreatePostPage from "./pages/CreatePostPage.tsx";
-import ProtectedRoute from "./components/ProtectedRoute.tsx";
-import SubscriptionsPage from "./pages/SubscriptionsPage.tsx";
-import SubmitIdeaPage from "./pages/SubmitIdeaPage.tsx";
-import RegisterPage from "./pages/RegisterPage.tsx";
-import LoginPage from "./pages/LoginPage.tsx";
-import AgeVerification from "./components/AgeVerification.tsx";
-import VisitTracker from "./components/VisitTracker.tsx";
-import ReactionsListPage from "./pages/ReactionsListPage.tsx";
-import IPBlocker from "./components/IPBlocker.tsx";
-import InvitesPage from "./pages/InvitesPage.tsx";
+import {Route, Routes} from "react-router-dom";
+import {HashRouter as Router} from "react-router-dom";
+import {Suspense, lazy} from "react";
+import {ProtectedRoute} from "./auth/components/ProtectedRoute.tsx";
+import {policy, auth, noAuth, role} from "./auth/policies/policyBuilders.ts";
+import {AGE_VERIFIED_KEY, queryClient} from "./main.tsx";
+import {ThemeProvider} from "./common/context/ThemeProvider.tsx";
+import {AuthProvider} from "./auth/providers/AuthProvider.tsx";
+import {QueryClientProvider} from "@tanstack/react-query";
+import GeoCheck from "./common/components/GeoCheck.tsx";
+import TrackVisit from "./pages/TrackVisit.tsx";
+import {useAuth} from "./auth/hooks/useAuth.ts";
+import Maintenance from "./pages/Maintenance.tsx";
 
-const AppContent: React.FC = () => {
-    return (
-        <AuthProvider>
-            <Router>
-                <Routes>
-                    <Route path="/" element={<Layout />}>
-                        <Route index element={<PostsList />} />
-                        <Route path="story/:id" element={<PostPage />} />
-                        <Route path="upgrade" element={ <SubscriptionsPage /> } />
-                        <Route path="submit-idea" element={ <SubmitIdeaPage /> } />
-                        <Route path="register" element={ <RegisterPage /> } />
-                        <Route path="login" element={ <LoginPage /> } />
-                        <Route path="track" element={<VisitTracker />} />
-                        <Route path="invites" element={ <InvitesPage /> } />
-                        <Route path="reactions" element={
-                            <ProtectedRoute children={<ReactionsListPage />} requiredTier={999} />
-                        } />
-                        <Route path="create-story" element={
-                            <ProtectedRoute children={<CreatePostPage />} requiredTier={999} />
-                        } />
-                        <Route path="about" element={<AboutPage />} />
-                    </Route>
-                </Routes>
-            </Router>
-            <Toaster
-                position="top-right"
-                toastOptions={{
-                    duration: 4000,
-                    //@ts-expect-error: nothing to see here
-                    style: (theme) => ({
-                        background: theme === 'dark'
-                            ? 'rgba(31, 41, 55, 0.8)'
-                            : 'rgba(255, 255, 255, 0.1)',
-                        backdropFilter: 'blur(10px)',
-                        color: theme === 'dark' ? '#f3f4f6' : '#fff',
-                        border: theme === 'dark'
-                            ? '1px solid rgba(75, 85, 99, 0.3)'
-                            : '1px solid rgba(255, 255, 255, 0.2)',
-                        borderRadius: '12px',
-                    }),
-                    success: {
-                        iconTheme: {
-                            primary: '#ec4899',
-                            secondary: '#fff',
-                        },
-                    },
-                    error: {
-                        iconTheme: {
-                            primary: '#ef4444',
-                            secondary: '#fff',
-                        },
-                    },
-                }}
-            />
-        </AuthProvider>
-    );
-};
+const MainLayout = lazy(() => import("./layout/MainLayout.tsx"));
+const Login = lazy(() => import("./pages/Login.tsx"));
+const FocusLayout = lazy(() => import("./layout/FocusLayout.tsx"));
+const Register = lazy(() => import("./pages/Register.tsx"));
+const Posts = lazy(() => import("./blog/pages/Posts.tsx"));
+const Post = lazy(() => import("./blog/pages/Post.tsx"));
+const About = lazy(() => import("./blog/pages/About.tsx"));
+const Subscriptions = lazy(() => import("./blog/pages/Subscriptions.tsx"));
+const IdeaSubmit = lazy(() => import("./blog/pages/IdeaSubmit.tsx"));
+const CreatePost = lazy(() => import("./blog/pages/posts/CreatePost.tsx"));
+const EditPost = lazy(() => import("./blog/pages/posts/EditPost.tsx"));
+const ToastContainer = lazy(() => import("./common/components/ToastContainer.tsx"));
+const Unauthorized = lazy(() => import("./pages/Unauthorized.tsx"));
+const EmailConfirmation = lazy(() => import("./pages/EmailConfirmation.tsx"));
+const NotFound = lazy(() => import("./pages/NotFound.tsx"));
+const Loader = lazy(() => import("./common/components/Loader.tsx"));
+const Invites = lazy(() => import("./invites/pages/Invites.tsx"));
+const AgeConfirmation = lazy(() => import("./pages/AgeConfirmation.tsx"));
 
-const App: React.FC = () => {
-    const [isVerified, setIsVerified] = useState<boolean | null>(null);
+function Routing() {
 
-    useEffect(() => {
-        const ageVerified = localStorage.getItem('ageVerified') === 'true';
-        setIsVerified(ageVerified);
-    }, []);
+    const {user, initialized} = useAuth();
 
-    if (isVerified === null) {
-        return (
-            <ThemeProvider>
-                <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
-                    <div className="text-center">
-                        <div className="w-16 h-16 border-4 border-pink-200 border-t-pink-500 rounded-full animate-spin mx-auto mb-4"></div>
-                        <p className="text-white font-medium">Loading...</p>
-                    </div>
-                </div>
-            </ThemeProvider>
-        );
+    if (!initialized) {
+        return null;
     }
 
+    if (user?.id !== '9c9deca4-1ec0-45b6-99e9-e4bd59814d0d')
+        return <Maintenance/>
+
+    if (!localStorage.getItem(AGE_VERIFIED_KEY))
+        return <AgeConfirmation/>
+
+    return <Router>
+        <Suspense fallback={<Loader className="w-full h-full"/>}>
+            <Routes>
+                <Route element={
+                    <Suspense>
+                        <MainLayout/>
+                    </Suspense>
+                }>
+                    <Route path="/" element={
+                        <Suspense>
+                            <Posts/>
+                        </Suspense>
+                    }/>
+                    <Route
+                        path="/idea"
+                        element={
+                            <Suspense>
+                                <ProtectedRoute policy={policy(auth())}>
+                                    <IdeaSubmit/>
+                                </ProtectedRoute>
+                            </Suspense>
+                        }
+                    />
+                    <Route path="/subscriptions" element={<Subscriptions/>}/>
+                    <Route path="/invites" element={
+                        <Suspense>
+                            <ProtectedRoute policy={policy(auth())}>
+                                <Invites/>
+                            </ProtectedRoute>
+                        </Suspense>
+                    }/>
+                    <Route path="/about" element={<About/>}/>
+                    <Route path="/posts/create"
+                           element={
+                               <Suspense>
+                                   <ProtectedRoute policy={policy(auth(), role('admin'))}>
+                                       <CreatePost/>
+                                   </ProtectedRoute>
+                               </Suspense>
+                           }
+                    />
+                    <Route path="/posts/edit/:id"
+                           element={
+                               <Suspense>
+                                   <ProtectedRoute policy={policy(auth(), role('admin'))}>
+                                       <EditPost/>
+                                   </ProtectedRoute>
+                               </Suspense>
+                           }
+                    />
+                    <Route path="/posts/:id" element={<Post/>}/>
+                </Route>
+
+                <Route element={<FocusLayout/>}>
+                    <Route
+                        path="/login"
+                        element={
+                            <ProtectedRoute forbiddenTo="/" policy={policy(noAuth())}>
+                                <Login/>
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/register"
+                        element={
+                            <ProtectedRoute forbiddenTo="/" policy={policy(noAuth())}>
+                                <Register/>
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route path="/403" element={<Unauthorized/>}/>
+                    <Route path="/email-confirmation" element={<EmailConfirmation/>}/>
+                    <Route path="*" element={<NotFound/>}/>
+                </Route>
+
+                <Route path="/track/" element={
+                    <Suspense>
+                        <TrackVisit/>
+                    </Suspense>
+                }/>
+            </Routes>
+        </Suspense>
+
+        <Suspense fallback={null}>
+            <ToastContainer/>
+        </Suspense>
+    </Router>
+}
+
+function App() {
     return (
-        <IPBlocker blockedCountries={['RU', 'RUS', '643']}>
-            <ThemeProvider>
-                {!isVerified ? <AgeVerification /> : <AppContent />}
-            </ThemeProvider>
-        </IPBlocker>
+        <QueryClientProvider client={queryClient}>
+            <GeoCheck>
+                <AuthProvider>
+                    <ThemeProvider>
+                        <Routing/>
+                    </ThemeProvider>
+                </AuthProvider>
+            </GeoCheck>
+        </QueryClientProvider>
     );
-};
+}
 
 export default App;

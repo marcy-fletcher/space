@@ -14,24 +14,85 @@
     --color-primary-800: #9d174d;
     --color-primary-900: #831843;
 
+    --color-shade-50: #fbeefc;
+    --color-shade-100: #f7ddf8;
+    --color-shade-200: #f3ccf5;
+    --color-shade-300: #ebaaee;
+    --color-shade-400: #e488e7;
+    --color-shade-500: #dc67e0;
+    --color-shade-600: #d543d9;
+    --color-shade-700: #c62acb;
+    --color-shade-800: #b526ba;
+    --color-shade-900: #631566;
+
+    --color-danger-50: #fef2f2;
+    --color-danger-100: #fee2e2;
+    --color-danger-200: #fecaca;
+    --color-danger-300: #fca5a5;
+    --color-danger-400: #f87171;
+    --color-danger-500: #ef4444;
+    --color-danger-600: #dc2626;
+    --color-danger-700: #b91c1c;
+    --color-danger-800: #991b1b;
+    --color-danger-900: #7f1d1d;
+
+    --color-success-50: #f0fdf4;
+    --color-success-100: #dcfce7;
+    --color-success-200: #bbf7d0;
+    --color-success-300: #86efac;
+    --color-success-400: #4ade80;
+    --color-success-500: #22c55e;
+    --color-success-600: #16a34a;
+    --color-success-700: #15803d;
+    --color-success-800: #166534;
+    --color-success-900: #14532d;
+
+    --color-warning-50: #fffbeb;
+    --color-warning-100: #fef3c7;
+    --color-warning-200: #fde68a;
+    --color-warning-300: #fcd34d;
+    --color-warning-400: #fbbf24;
+    --color-warning-500: #f59e0b;
+    --color-warning-600: #d97706;
+    --color-warning-700: #b45309;
+    --color-warning-800: #92400e;
+    --color-warning-900: #78350f;
+
+    --color-mono-50: var(--color-gray-50);
+    --color-mono-100: var(--color-gray-100);
+    --color-mono-200: var(--color-gray-200);
+    --color-mono-300: var(--color-gray-300);
+    --color-mono-400: var(--color-gray-400);
+    --color-mono-500: var(--color-gray-500);
+    --color-mono-600: var(--color-gray-600);
+    --color-mono-700: var(--color-gray-700);
+    --color-mono-800: var(--color-gray-800);
+    --color-mono-900: var(--color-gray-900);
+
+    --breakpoint-xs: 30rem;
+    --text-subbase: 0.925rem;
+    --text-ssm: 0.825rem;
+    --text-xss: 0.6rem;
+
     --font-serif: "Playfair Display", serif;
     --font-sans: "Inter", sans-serif;
-
-    --background-image-dark-gradient: linear-gradient(
-            to bottom right,
-            #1a1a2e,
-            #16213e,
-            #0f3460
-    );
-
-    --background-image-light-gradient: linear-gradient(
-            to bottom right,
-            #fdf2f8,
-            #faf5ff,
-            #fdf2f8
-    );
 }
 
 .reading-font-serif {
     font-family: 'Source Serif Pro', 'Georgia', serif;
+}
+
+:root {
+    background-color: var(--color-mono-900);
+    --toastify-color-light: #fff;
+    --toastify-color-dark: var(--color-mono-800);
+
+    --toastify-color-progress-light: var(--color-primary-500);
+    --toastify-color-progress-dark: var(--color-primary-500);
+}
+
+@layer components {
+    .image-sharp{
+        image-rendering: pixelated;
+    }
 }
