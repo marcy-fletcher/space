@@ -35,9 +35,7 @@ export async function logError<T>(errorCode: ErrorCode, metadata?: T) {
     const loggingAllowed =
         localStorage.getItem(DEBUG_LOGGING_ALLOWED_KEY) === 'true';
 
-    const isDev = import.meta.env.MODE === 'development';
-
-    if (!loggingAllowed || isDev)
+    if (!loggingAllowed)
         return;
 
     const supabase = await getSupabase();
@@ -56,9 +54,7 @@ export async function logInfo<T>(event: EventCode, metadata?: T): Promise<void> 
     const loggingAllowed =
         localStorage.getItem(DEBUG_LOGGING_ALLOWED_KEY) === 'true';
 
-    const isDev = import.meta.env.MODE === 'development';
-
-    if (!loggingAllowed || isDev)
+    if (!loggingAllowed)
         return;
 
     const now = Date.now();
