@@ -9,8 +9,6 @@ import {AuthProvider} from "./auth/providers/AuthProvider.tsx";
 import {QueryClientProvider} from "@tanstack/react-query";
 import GeoCheck from "./common/components/GeoCheck.tsx";
 import TrackVisit from "./pages/TrackVisit.tsx";
-import {useAuth} from "./auth/hooks/useAuth.ts";
-import Maintenance from "./pages/Maintenance.tsx";
 
 const MainLayout = lazy(() => import("./layout/MainLayout.tsx"));
 const Login = lazy(() => import("./pages/Login.tsx"));
