@@ -4,6 +4,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSpinner} from "@fortawesome/free-solid-svg-icons";
 import {cn} from "../../utils/cn.ts";
 
+import loading from "../../../public/loading.gif";
+
 interface LoaderProps {
     className?: string;
 }
@@ -11,7 +13,7 @@ interface LoaderProps {
 const Loader = ({className}: LoaderProps) => {
     return (
         <div className={cn("flex items-center justify-center flex-col select-none", className)}>
-            <img alt="loader" className="image-sharp w-64 h-64 object-contain" src="public/loading.gif"></img>
+            <img alt="loader" className="image-sharp w-64 h-64 object-contain" src={loading}></img>
             <Card className="-mt-2 rounded-full">
                 <Header>
                     <FontAwesomeIcon className="mr-3" icon={faSpinner} spin/>

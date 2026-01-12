@@ -8,6 +8,8 @@ import {useDocumentTitle} from "../layout/hooks/useDocumentTitle.ts";
 import {ErrorCodes} from "../common/services/logging.service.ts";
 import {useLogError} from "../common/hooks/useLogError.ts";
 
+import unauthorized from "../../public/403.webp";
+
 interface UnauthorizedProps {
     title?: string;
     message?: string;
@@ -18,7 +20,7 @@ interface UnauthorizedProps {
 const Unauthorized = ({
                           title = "Unauthorized",
                           message = "You don't have permission to access this page. Please log in with the correct account or contact your administrator.",
-                          imageSrc = "/public/403.webp",
+                          imageSrc = unauthorized,
                           className,
                       }: UnauthorizedProps) => {
 

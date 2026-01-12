@@ -7,6 +7,8 @@ import {useDocumentTitle} from "../layout/hooks/useDocumentTitle.ts";
 import {ErrorCodes} from "../common/services/logging.service.ts";
 import {useLogError} from "../common/hooks/useLogError.ts";
 
+import notFound from "../../public/404.webp";
+
 interface NotFoundProps {
     title?: string;
     message?: string;
@@ -17,7 +19,7 @@ interface NotFoundProps {
 const NotFound = ({
                       title = "Page Not Found",
                       message = "The page you are looking for does not exist or has been moved. Please check the URL or return home.",
-                      imageSrc = "/public/404.webp",
+                      imageSrc = notFound,
                       className,
                   }: NotFoundProps) => {
 

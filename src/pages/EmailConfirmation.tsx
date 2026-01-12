@@ -5,6 +5,8 @@ import Button from "../common/components/Button.tsx";
 import {useNavigate} from "react-router-dom";
 import {useDocumentTitle} from "../layout/hooks/useDocumentTitle.ts";
 
+import emailConfirmation from "../../public/404.webp";
+
 interface EmailConfirmationProps {
     title?: string;
     message?: string;
@@ -15,7 +17,7 @@ interface EmailConfirmationProps {
 const EmailConfirmation = ({
                                title = "Email Confirmation",
                                message = "Please check your inbox and confirm your email address to complete the registration process. If you haven't received the email, check your spam folder or request a new one.",
-                               imageSrc = "/public/email-confirmation.webp",
+                               imageSrc = emailConfirmation,
                                className,
                            }: EmailConfirmationProps) => {
 

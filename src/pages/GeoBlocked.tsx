@@ -3,6 +3,8 @@ import {useDocumentTitle} from "../layout/hooks/useDocumentTitle.ts";
 import {ErrorCodes} from "../common/services/logging.service.ts";
 import {useLogError} from "../common/hooks/useLogError.ts";
 
+import geoBlocked from "../../public/geo-blocked.webp";
+
 interface GeoBlockedProps {
     title?: string;
     message?: string;
@@ -13,7 +15,7 @@ interface GeoBlockedProps {
 const GeoBlocked = ({
                         title = "Geo Blocked",
                         message = "You are currently located in a country that is restricted from accessing this service.",
-                        imageSrc = "/public/geo-blocked.webp",
+                        imageSrc = geoBlocked,
                         className
                     }: GeoBlockedProps) => {
 
