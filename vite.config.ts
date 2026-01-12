@@ -7,7 +7,7 @@ export default defineConfig({
         react(),
         tailwindcss()
     ],
-    base: '/space/',
+    base: '/space',
     build: {
         rollupOptions: {
             output: {
