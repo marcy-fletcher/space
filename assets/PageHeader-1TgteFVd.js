@@ -1,0 +1,1 @@
+import{j as e}from"./vendor-font-awesome-fb8PRCmj.js";const a=({title:s,subtitle:t})=>e.jsxs("header",{className:"text-center mb-8",children:[e.jsx("h1",{className:"text-5xl font-bold dark:text-mono-100 mb-4 font-serif",children:s}),t&&e.jsx("p",{className:"text-base text-mono-600 dark:text-mono-200 font-light font-sans",children:t})]});export{a as P};

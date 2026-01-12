@@ -1,0 +1,1 @@
+import{j as e}from"./vendor-font-awesome-fb8PRCmj.js";import{O as t}from"./vendor-react-Cx4ePrNi.js";const r=()=>e.jsx("div",{className:"bg-mono-200 dark:bg-mono-900 min-h-screen flex items-center justify-center",children:e.jsx(t,{})});export{r as default};
