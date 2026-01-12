@@ -3,7 +3,7 @@ export const AppMeta = {
     appOwner: 'Marcy Fletcher',
     appDescription: "Home of your beloved Devil",
     logoUrl: "https://mntdvvnqrwqggrsjulph.supabase.co/storage/v1/object/public/illusrations/icon.png",
-    enableGeoCheck: false,
+    enableGeoCheck: true,
     blockedCountries: [
         'ru', 'cn', 'by'
     ]
