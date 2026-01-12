@@ -33,15 +33,6 @@ const AgeConfirmation = lazy(() => import("./pages/AgeConfirmation.tsx"));
 
 function Routing() {
 
-    const {user, initialized} = useAuth();
-
-    if (!initialized) {
-        return null;
-    }
-
-    if (user?.id !== '9c9deca4-1ec0-45b6-99e9-e4bd59814d0d')
-        return <Maintenance/>
-
     if (!localStorage.getItem(AGE_VERIFIED_KEY))
         return <AgeConfirmation/>
 
