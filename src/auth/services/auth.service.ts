@@ -50,7 +50,8 @@ export async function signUp(username: string, email: string, password: string) 
         email,
         password,
         options: {
-            data: {username}
+            data: {username},
+            emailRedirectTo: 'https://marcy-fletcher.github.io/space/'
         },
     });
 
