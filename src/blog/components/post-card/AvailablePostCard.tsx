@@ -13,6 +13,7 @@ import ReactionsGroup from "./ReactionsGroup.tsx";
 import {useSearchStore} from "../../model/searchStore.ts";
 import {useState} from "react";
 import LinkButton from "../../../common/components/LinkButton.tsx";
+import {Link} from "react-router-dom";
 
 interface AvailablePostCardProps {
     post: PostSummary
@@ -31,10 +32,12 @@ const AvailablePostCard = ({post}: AvailablePostCardProps) => {
                     explicitness={post.metadata!.explicitness} />}
 
             <div className="flex justify-between items-start mb-8">
-                <Header
-                    title={post.title!}
-                    pictureUrl={post.pictureUrl!}
-                    createdAt={post.createdAt} />
+                <Link to={`/posts/${post.metadata?.slug}`}>
+                    <Header
+                        title={post.title!}
+                        pictureUrl={post.pictureUrl!}
+                        createdAt={post.createdAt} />
+                </Link>
             </div>
 
 
