@@ -126,13 +126,13 @@ function Routing() {
 function App() {
     return (
         <QueryClientProvider client={queryClient}>
-            <GeoCheck>
-                <AuthProvider>
-                    <ThemeProvider>
+            <AuthProvider>
+                <ThemeProvider>
+                    <GeoCheck>
                         <Routing/>
-                    </ThemeProvider>
-                </AuthProvider>
-            </GeoCheck>
+                    </GeoCheck>
+                </ThemeProvider>
+            </AuthProvider>
         </QueryClientProvider>
     );
 }
