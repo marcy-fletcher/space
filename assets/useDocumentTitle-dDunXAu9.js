@@ -1,0 +1,1 @@
+import{a as r}from"./vendor-font-awesome-fb8PRCmj.js";import{A as u}from"./index-DRcweXlT.js";function a(t,e=u.appName){r.useEffect(()=>{if(!t)return;const o=document.title;return document.title=`${t} - ${e}`,()=>{document.title=o}},[t,e])}export{a as u};
