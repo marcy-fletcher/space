@@ -14,11 +14,13 @@ const AvailableRelatedPost = ({relatedPost}: AvailableRelatedPostProps) => {
     return (
         <Card className="flex flex-col gap-4">
 
+            <Link to={`/posts/${relatedPost.slug}`}>
             <div className="flex flex-row gap-4 items-center">
                 <UserImage className="min-w-10 min-h-10 w-10 h-10" source={relatedPost.pictureUrl}
                            alt="Related post preview"/>
                 {relatedPost.title && <Header>{truncate(relatedPost.title, 30)}</Header>}
             </div>
+            </Link>
 
             {relatedPost.summary &&
                 <p className="text-sm text-mono-500">
