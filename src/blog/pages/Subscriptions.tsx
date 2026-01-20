@@ -96,15 +96,6 @@ const Subscriptions = () => {
                             mockery, slurs, and phobias</b></u>, which could be particularly upsetting to a modern
                             Western audience.
                         </p>
-
-                        <Button className="w-full mt-8"
-                                variant="outline"
-                                onClick={() => {
-                                    navigate('/register')
-                                }}
-                        >
-                            Request Subscription
-                        </Button>
                     </Card>
                 </div>
 
@@ -132,20 +123,11 @@ const Subscriptions = () => {
                             </li>
                         </ul>
 
-                        <p className="mt-6 text-mono-500 dark:text-mono-300 text-center text-justify text-sm/6">
+                        <p className="mt-6 text-mono-500 dark:text-mono-300 text-justify text-sm/6">
                             This tier may contain extremely brutal and graphic depictions of mental and physical <u><b>abuse
                             and violence</b></u> of various kinds, and is significantly more unhinged than the previous
                             tier.
                         </p>
-
-                        <Button className="w-full mt-8"
-                                variant="outline"
-                                onClick={() => {
-                                    navigate('/register')
-                                }}
-                        >
-                            Request Subscription
-                        </Button>
                     </Card>
                 </div>
             </div>
