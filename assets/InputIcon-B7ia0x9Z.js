@@ -1,0 +1,1 @@
+import{j as e,F as n}from"./vendor-font-awesome-fb8PRCmj.js";import{c as o}from"./index-lBioDFl4.js";const m=({icon:t,hasError:s})=>e.jsx("div",{className:"absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none",children:e.jsx(n,{icon:t,className:o("w-4 h-4 text-mono-400",s?"text-red-600 dark:text-red-400":"")})});export{m as I};
