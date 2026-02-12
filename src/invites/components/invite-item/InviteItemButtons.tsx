@@ -5,10 +5,10 @@ import {useState} from "react";
 import {deleteInvite} from "../../services/invites.service.ts";
 import {useMutation} from "@tanstack/react-query";
 import type {Invite} from "../../types/invites.ts";
-import {queryClient} from "../../../main.tsx";
 import {toast} from "react-toastify";
 import {useAuth} from "../../../auth/hooks/useAuth.ts";
 import {cn} from "../../../utils/cn.ts";
+import {queryClient} from "../../../utils/common.ts";
 
 interface InviteItemButtonsProps {
     code: string;

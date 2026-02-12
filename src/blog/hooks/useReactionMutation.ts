@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import {toggleReaction} from "../services/reactions.service.ts";
-import {queryClient} from "../../main.tsx";
 import type {ReactionsStats, ReactionType} from "../types/reaction.ts";
 import {ErrorCodes, EventCodes, logError, logInfo} from "../../common/services/logging.service.ts";
+import {queryClient} from "../../utils/common.ts";
 
 interface UseReactionMutationParams {
     postId: number;

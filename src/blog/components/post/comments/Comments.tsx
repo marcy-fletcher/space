@@ -13,11 +13,11 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import type {AddCommentDto} from "../../../dtos/forms/addComment.dto.ts";
 import {z} from "zod";
-import {queryClient} from "../../../../main.tsx";
 import {useAuth} from "../../../../auth/hooks/useAuth.ts";
 import {toast} from "react-toastify";
 import {useEffect, useRef, useState} from "react";
 import {Link} from "react-router-dom";
+import {queryClient} from "../../../../utils/common.ts";
 
 interface CommentsProps {
     postId: number;

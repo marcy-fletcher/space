@@ -2,10 +2,7 @@ import {StrictMode} from 'react'
 import {createRoot} from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import {QueryClient} from "@tanstack/react-query";
-
-export const queryClient = new QueryClient();
-export const AGE_VERIFIED_KEY = 'age_verified';
+import {queryClient} from "./utils/common.ts";
 
 declare global {
     interface Window {

@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Divider from "../common/components/Divider.tsx";
 import {DEBUG_LOGGING_ALLOWED_KEY, EventCodes, logInfo} from "../common/services/logging.service.ts";
-import {AGE_VERIFIED_KEY} from "../main.tsx";
+import {AGE_VERIFIED_KEY} from "../utils/common.ts";
 
 const AgeConfirmation = () => {
     const [confirmationClicked, setConfirmationClicked] = useState(false);

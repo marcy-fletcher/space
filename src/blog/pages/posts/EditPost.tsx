@@ -8,7 +8,7 @@ import type {CreatePostDto} from "../../dtos/forms/createPostDto.ts";
 import type {StringId} from "../../types/id.ts";
 import {getPostForUpdate, updatePost} from "../../services/posts.service.ts";
 import {toast} from "react-toastify";
-import {queryClient} from "../../../main.tsx";
+import {queryClient} from "../../../utils/common.ts";
 
 type EditPostType = Omit<CreatePostDto, 'related_posts'> & {
     related_posts: StringId[]

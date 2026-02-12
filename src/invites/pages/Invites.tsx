@@ -18,10 +18,10 @@ import {toast} from "react-toastify";
 import {cn} from "../../utils/cn.ts";
 import {type Subscription, type SubscriptionKey, SubscriptionKeys} from "../../auth/types/subscription.ts";
 import InputSelect from "../../common/components/inputs/InputSelect.tsx";
-import {queryClient} from "../../main.tsx";
 import {useDocumentTitle} from "../../layout/hooks/useDocumentTitle.ts";
 import {usePageLog} from "../../common/hooks/usePageLog.ts";
 import {ErrorCodes, EventCodes, logError, logInfo} from "../../common/services/logging.service.ts";
+import {queryClient} from "../../utils/common.ts";
 
 interface InviteInput {
     key: string

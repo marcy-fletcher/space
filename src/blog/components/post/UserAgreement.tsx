@@ -7,10 +7,10 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle, faSpinner} from "@fortawesome/free-solid-svg-icons";
 import {capitalizeWords} from "../../../utils/capitalizeWords.ts";
 import Button from "../../../common/components/Button.tsx";
-import {queryClient} from "../../../main.tsx";
 import {useMutation} from "@tanstack/react-query";
 import {grantAgreement} from "../../services/posts.service.ts";
 import type {Post} from "../../types/post.ts";
+import {queryClient} from "../../../utils/common.ts";
 
 interface UserAgreementProps {
     queryId?: string;

@@ -4,8 +4,8 @@ import { getPaginatedPosts } from "../services/posts.service";
 import type { PaginatedPostsResponse } from "../dtos/paginatedPosts.response";
 import { useSearchStore } from "../model/searchStore";
 import { useUrlStorage } from "../../common/hooks/useUrlStorage";
-import { queryClient } from "../../main";
 import {useAuth} from "../../auth/hooks/useAuth.ts";
+import {queryClient} from "../../utils/common.ts";
 
 export const usePosts = () => {
     const { user } = useAuth();

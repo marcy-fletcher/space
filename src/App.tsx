@@ -3,12 +3,12 @@ import {HashRouter as Router} from "react-router-dom";
 import {Suspense, lazy} from "react";
 import {ProtectedRoute} from "./auth/components/ProtectedRoute.tsx";
 import {policy, auth, noAuth, role} from "./auth/policies/policyBuilders.ts";
-import {AGE_VERIFIED_KEY, queryClient} from "./main.tsx";
 import {ThemeProvider} from "./common/context/ThemeProvider.tsx";
 import {AuthProvider} from "./auth/providers/AuthProvider.tsx";
 import {QueryClientProvider} from "@tanstack/react-query";
 import GeoCheck from "./common/components/GeoCheck.tsx";
 import TrackVisit from "./pages/TrackVisit.tsx";
+import {AGE_VERIFIED_KEY, queryClient} from "./utils/common.ts";
 
 const MainLayout = lazy(() => import("./layout/MainLayout.tsx"));
 const Login = lazy(() => import("./pages/Login.tsx"));
