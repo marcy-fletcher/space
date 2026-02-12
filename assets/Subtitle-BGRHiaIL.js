@@ -1,1 +1,0 @@
-import{j as s}from"./vendor-font-awesome-fb8PRCmj.js";import{c as m}from"./index-DVJIb8Cr.js";const x=({children:t,className:o})=>s.jsx("p",{className:m("text-mono-600 dark:text-mono-400 text-sm",o),children:t});export{x as S};

@@ -1,1 +1,0 @@
-import{j as o}from"./vendor-font-awesome-fb8PRCmj.js";import{c as m}from"./index-DVJIb8Cr.js";const t=({className:r})=>o.jsx("div",{className:m("w-full mt-4 border-b border-mono-100 dark:border-mono-700",r)});export{t as D};
