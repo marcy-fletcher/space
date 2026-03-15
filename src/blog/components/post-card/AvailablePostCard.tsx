@@ -58,6 +58,8 @@ const AvailablePostCard = ({post}: AvailablePostCardProps) => {
                 {post.summary}
             </p>
 
+            <div className="grow" />
+
             {post.warnings && post.warnings.length > 0 &&
                 <Group name="Content Warnings">
                     <div className="flex flex-wrap gap-2">
@@ -82,7 +84,6 @@ const AvailablePostCard = ({post}: AvailablePostCardProps) => {
                     </div>
                 </Group>}
 
-            <div className="grow" />
             <LinkButton
                 className="w-full flex items-center justify-center space-x-2 py-3"
                 shape="square"
