@@ -27,11 +27,9 @@ const useGeoBlock = () => {
         }
     );
 
-    const blockedCountries: string[] = AppMeta.blockedCountries;
     const isChecked = !AppMeta.enableGeoCheck || (!!data || error);
-    const isAvailable = !AppMeta.enableGeoCheck || (data && !blockedCountries.includes(data?.countryCode?.toLowerCase()));
 
-    return {isChecked, isAvailable, isLoading, error};
+    return {isChecked, isAvailable:true, isLoading, error};
 };
 
 export default useGeoBlock;
