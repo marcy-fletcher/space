@@ -5,7 +5,7 @@ import Button from "../common/components/Button.tsx";
 import {useNavigate} from "react-router-dom";
 import {useDocumentTitle} from "../layout/hooks/useDocumentTitle.ts";
 
-import emailConfirmation from "../../public/404.webp";
+import emailConfirmation from "../assets/404.webp";
 
 interface EmailConfirmationProps {
     title?: string;

@@ -7,7 +7,7 @@ import {useDocumentTitle} from "../layout/hooks/useDocumentTitle.ts";
 import {ErrorCodes} from "../common/services/logging.service.ts";
 import {useLogError} from "../common/hooks/useLogError.ts";
 
-import notFound from "../../public/404.webp";
+import notFound from "../assets/404.webp";
 
 interface NotFoundProps {
     title?: string;

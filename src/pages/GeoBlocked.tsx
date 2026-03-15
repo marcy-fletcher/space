@@ -3,7 +3,7 @@ import {useDocumentTitle} from "../layout/hooks/useDocumentTitle.ts";
 import {ErrorCodes} from "../common/services/logging.service.ts";
 import {useLogError} from "../common/hooks/useLogError.ts";
 
-import geoBlocked from "../../public/geo-blocked.webp";
+import geoBlocked from "../assets/geo-blocked.webp";
 
 interface GeoBlockedProps {
     title?: string;

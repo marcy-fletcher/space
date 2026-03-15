@@ -8,7 +8,7 @@ import {useDocumentTitle} from "../layout/hooks/useDocumentTitle.ts";
 import {ErrorCodes} from "../common/services/logging.service.ts";
 import {useLogError} from "../common/hooks/useLogError.ts";
 
-import unauthorized from "../../public/403.webp";
+import unauthorized from "../assets/403.webp";
 
 interface UnauthorizedProps {
     title?: string;

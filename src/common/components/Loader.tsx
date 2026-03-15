@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSpinner} from "@fortawesome/free-solid-svg-icons";
 import {cn} from "../../utils/cn.ts";
 
-import loading from "../../../public/loading.gif";
+import loading from "../../assets/loading.gif";
 
 interface LoaderProps {
     className?: string;

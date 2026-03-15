@@ -1,5 +1,5 @@
 import {useDocumentTitle} from "../layout/hooks/useDocumentTitle.ts";
-import maintenance from "../../public/maintenance.webp";
+import maintenance from "../assets/maintenance.webp";
 
 const Maintenance = () => {
 
