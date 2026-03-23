@@ -10,17 +10,71 @@ import {useNavigate} from "react-router-dom";
 import {useDocumentTitle} from "../../layout/hooks/useDocumentTitle.ts";
 import {useAuth} from "../../auth/hooks/useAuth.ts";
 import {usePageLog} from "../../common/hooks/usePageLog.ts";
-import {getSubscriptionByRoleKey} from "../../auth/types/subscription.ts";
+import {getSubscriptionByRoleKey, type SubscriptionKey} from "../../auth/types/subscription.ts";
+import SubscriptionRequestModal from "../components/subscriptions/SubscriptionRequestModal.tsx";
+import {useState} from "react";
+import {hasSubscriptionRequest, requestSubscriptionTier} from "../../auth/services/subscriptions.service.ts";
+import {toast} from "react-toastify";
+import {useQuery} from "@tanstack/react-query";
 
 const Subscriptions = () => {
 
-    const {isAuthenticated, role} = useAuth();
+    const {user, isAuthenticated, role} = useAuth();
+    const [modalTier, setModalTier] = useState<SubscriptionKey | null>(null);
+
+    const query = useQuery<boolean, Error>({
+        queryKey: ["hasSubscriptionRequests", user?.id],
+        queryFn: () => hasSubscriptionRequest(user?.id),
+        staleTime: 1000 * 60 * 5,
+        retry: 2,
+        enabled: isAuthenticated
+    });
+
     const subscription = getSubscriptionByRoleKey(role);
 
     useDocumentTitle("Subscriptions");
     usePageLog("Subscriptions");
 
     const navigate = useNavigate();
+
+    function hasRank(rank: number) {
+
+        if (!isAuthenticated){
+            return false;
+        }
+
+        return subscription && subscription.rank >= rank;
+    }
+
+    function checkDisabled(rank: number) {
+
+        if (!isAuthenticated){
+            return true;
+        }
+
+        if (query.data) {
+            return true;
+        }
+
+        return hasRank(rank);
+    }
+
+    function getLabel(rank: number): string {
+        if (!isAuthenticated) {
+            return "Log in to request a subscription";
+        }
+
+        if (query.data) {
+            return "You already have an active subscription request";
+        }
+
+        if (subscription && subscription.rank >= rank) {
+            return "You already have this subscription tier or higher";
+        }
+
+        return "Request Subscription";
+    }
+
 
     return (
         <div className="container mx-auto px-4 max-w-5xl">
@@ -101,11 +155,11 @@ const Subscriptions = () => {
 
                         <Button
                             className="w-full mt-8"
-                            disabled={subscription && subscription.rank > 1}
-                            variant={!(subscription && subscription.rank > 1) ? "submit" : "outline"}
-                            onClick={() => navigate('/register')}
+                            disabled={checkDisabled(2)}
+                            variant={(!checkDisabled(2) && !hasRank(2)) ?  "submit" : "outline"}
+                            onClick={() => setModalTier('high-priest')}
                         >
-                            <p className="truncate">{subscription && subscription.rank > 1 ? "You already have this tier" : "Request subscription"}</p>
+                            {getLabel(2)}
                         </Button>
                     </Card>
                 </div>
@@ -142,15 +196,31 @@ const Subscriptions = () => {
 
                         <Button
                             className="w-full mt-8"
-                            disabled={subscription && subscription.rank > 2}
-                            variant={!(subscription && subscription.rank > 2) ? "submit" : "outline"}
-                            onClick={() => navigate('/register')}
+                            disabled={checkDisabled(3)}
+                            variant={(!checkDisabled(3) && !hasRank(3)) ?  "submit" : "outline"}
+                            onClick={() => setModalTier('cult-leader')}
                         >
-                            <p className="truncate">{subscription && subscription.rank > 2 ? "You already have this tier" : "Request subscription"}</p>
+                            {getLabel(3)}
                         </Button>
                     </Card>
                 </div>
             </div>
+
+            <SubscriptionRequestModal
+                isOpen={modalTier !== null}
+                onClose={() => setModalTier(null)}
+                tier={modalTier!}
+                onSubmitRequest={async (tier) => {
+                    const result = await requestSubscriptionTier(tier);
+                    await query.refetch();
+
+                    if (!result) {
+                        toast.error("An unexpected error occurred. Please try again later.");
+                    } else {
+                        toast.success("Requested successfully submitted.");
+                    }
+                }}
+            />
         </div>
     );
 };

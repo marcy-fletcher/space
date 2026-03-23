@@ -48,3 +48,38 @@ export async function getSubscriptionTiers(): Promise<SubscriptionTier[]> {
         rank: dto.rank
     }));
 }
+
+export async function requestSubscriptionTier(subscriptionKey: string): Promise<boolean> {
+    const supabase = await getSupabase();
+
+    const { error } = await supabase
+        .schema("subscriptions")
+        .rpc("create_subscription_request", {
+            subscription_key: subscriptionKey,
+        });
+
+    return !error;
+}
+
+export async function hasSubscriptionRequest(userId: string | undefined): Promise<boolean> {
+
+    if (userId == undefined) {
+        return false;
+    }
+
+    const supabase = await getSupabase();
+
+    const { count, error } = await supabase
+        .schema("subscriptions")
+        .from("subscription_requests")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", userId);
+
+    if (error) {
+        console.error("Failed to check subscription requests:", error.message);
+        throw new Error("Failed to check subscription requests");
+    }
+
+    console.log(count);
+    return (count ?? 0) > 0;
+}
