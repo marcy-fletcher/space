@@ -10,10 +10,12 @@ import {useNavigate} from "react-router-dom";
 import {useDocumentTitle} from "../../layout/hooks/useDocumentTitle.ts";
 import {useAuth} from "../../auth/hooks/useAuth.ts";
 import {usePageLog} from "../../common/hooks/usePageLog.ts";
+import {getSubscriptionByRoleKey} from "../../auth/types/subscription.ts";
 
 const Subscriptions = () => {
 
-    const {isAuthenticated} = useAuth();
+    const {isAuthenticated, role} = useAuth();
+    const subscription = getSubscriptionByRoleKey(role);
 
     useDocumentTitle("Subscriptions");
     usePageLog("Subscriptions");
@@ -96,6 +98,15 @@ const Subscriptions = () => {
                             mockery, slurs, and phobias</b></u>, which could be particularly upsetting to a modern
                             Western audience.
                         </p>
+
+                        <Button
+                            className="w-full mt-8"
+                            disabled={subscription && subscription.rank > 1}
+                            variant={!(subscription && subscription.rank > 1) ? "submit" : "outline"}
+                            onClick={() => navigate('/register')}
+                        >
+                            <p className="truncate">{subscription && subscription.rank > 1 ? "You already have this tier" : "Request subscription"}</p>
+                        </Button>
                     </Card>
                 </div>
 
@@ -128,6 +139,15 @@ const Subscriptions = () => {
                             and violence</b></u> of various kinds, and is significantly more unhinged than the previous
                             tier.
                         </p>
+
+                        <Button
+                            className="w-full mt-8"
+                            disabled={subscription && subscription.rank > 2}
+                            variant={!(subscription && subscription.rank > 2) ? "submit" : "outline"}
+                            onClick={() => navigate('/register')}
+                        >
+                            <p className="truncate">{subscription && subscription.rank > 2 ? "You already have this tier" : "Request subscription"}</p>
+                        </Button>
                     </Card>
                 </div>
             </div>
