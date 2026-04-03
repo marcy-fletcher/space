@@ -1,1 +1,0 @@
-import{a as r}from"./vendor-font-awesome-DBhBxMCr.js";import{A as u}from"./appMeta-B1yHDSiB.js";function a(t,e=u.appName){r.useEffect(()=>{if(!t)return;const o=document.title;return document.title=`${t} - ${e}`,()=>{document.title=o}},[t,e])}export{a as u};

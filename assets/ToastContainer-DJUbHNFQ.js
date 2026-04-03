@@ -1,1 +1,0 @@
-import{j as o}from"./vendor-font-awesome-DBhBxMCr.js";import{L as r}from"./index-CNniB3wc.js";import{u as m}from"./useTheme-DWgXuWkh.js";import"./index-UwwKm-_d.js";import"./vendor-react-BCh5_HFF.js";import"./vendor-states-zJn92xy6.js";function u(){const{theme:t}=m();return o.jsx(r,{autoClose:1e3,theme:t,position:"bottom-right"})}export{u as default};
