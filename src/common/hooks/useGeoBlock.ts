@@ -3,17 +3,17 @@ import {AppMeta} from "../../appMeta";
 
 
 interface IpResponse {
-    countryCode: string
+    country: string
 }
 
 const fetchGeoLocation = async () => {
-    const response = await fetch('http://ip-api.com/json/');
+    const response = await fetch('https://get.geojs.io/v1/ip/country.json');
 
     if (!response.ok) {
         throw new Error('Failed to fetch geolocation data');
     }
 
-    return response.json();
+    return await response.json();
 };
 
 const useGeoBlock = () => {
@@ -29,7 +29,7 @@ const useGeoBlock = () => {
 
     const blockedCountries: string[] = AppMeta.blockedCountries;
     const isChecked = !AppMeta.enableGeoCheck || (!!data || error);
-    const isAvailable = !AppMeta.enableGeoCheck || (data && !blockedCountries.includes(data?.countryCode?.toLowerCase()));
+    const isAvailable = !AppMeta.enableGeoCheck || (data && !blockedCountries.includes(data?.country?.toLowerCase()));
 
     return {isChecked, isAvailable, isLoading, error};
 };
