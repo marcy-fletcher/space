@@ -137,6 +137,12 @@ export default function SubscriptionRequestModal({
                                 </p>
                             </div>
                         </Card>
+
+                        <div className="bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-sm text-blue-800 dark:text-blue-200">
+                            <p className="font-medium">
+                                To make sure you've read the terms, please write any comment on your favorite post
+                            </p>
+                        </div>
                     </div>
                 </div>
 
