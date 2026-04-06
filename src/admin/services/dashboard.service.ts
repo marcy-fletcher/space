@@ -50,6 +50,20 @@ interface DashboardPostOption {
     title: string;
 }
 
+interface CountQueryResult {
+    count: number | null;
+    error: Error | null;
+}
+
+interface CountQuery extends PromiseLike<CountQueryResult> {
+    eq: (column: string, value: unknown) => CountQuery;
+}
+
+interface CountRangeQuery extends CountQuery {
+    gte: (column: string, value: string) => CountRangeQuery;
+    lte: (column: string, value: string) => CountRangeQuery;
+}
+
 const PERIOD_HINT = "Period";
 const LIFETIME_HINT = "Lifetime";
 
@@ -190,17 +204,13 @@ async function countRowsInRange(
     table: string,
     column: string,
     filters: DashboardQueryFilters,
-    configure?: (query: {
-        eq: (column: string, value: unknown) => unknown;
-        gte: (column: string, value: string) => unknown;
-        lte: (column: string, value: string) => unknown;
-    }) => unknown
+    configure?: (query: CountRangeQuery) => CountRangeQuery
 ): Promise<number> {
     const supabase = await getSupabase();
-    let query: any = supabase
+    let query = supabase
         .schema(schema)
         .from(table)
-        .select("*", {count: "exact", head: true});
+        .select("*", {count: "exact", head: true}) as unknown as CountRangeQuery;
 
     if (configure) {
         query = configure(query);
@@ -220,15 +230,13 @@ async function countRowsInRange(
 async function countRows(
     schema: "blog" | "logging",
     table: string,
-    configure?: (query: {
-        eq: (column: string, value: unknown) => unknown;
-    }) => unknown
+    configure?: (query: CountQuery) => CountQuery
 ): Promise<number> {
     const supabase = await getSupabase();
-    let query: any = supabase
+    let query = supabase
         .schema(schema)
         .from(table)
-        .select("*", {count: "exact", head: true});
+        .select("*", {count: "exact", head: true}) as unknown as CountQuery;
 
     if (configure) {
         query = configure(query);
