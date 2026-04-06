@@ -58,7 +58,7 @@ export const useDashboardData = (
     const postOptionsQuery = useQuery({
         queryKey: ["admin-dashboard", "post-options"],
         queryFn: getPostOptions,
-        enabled: queriesEnabled,
+        enabled,
         staleTime: 1000 * 60 * 5,
         retry: 2
     });
