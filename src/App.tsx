@@ -28,6 +28,7 @@ const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 const Loader = lazy(() => import("./common/components/Loader.tsx"));
 const Invites = lazy(() => import("./invites/pages/Invites.tsx"));
 const AgeConfirmation = lazy(() => import("./pages/AgeConfirmation.tsx"));
+const AdminDashboard = lazy(() => import("./admin/pages/AdminDashboard.tsx"));
 
 function Routing() {
 
@@ -80,6 +81,15 @@ function Routing() {
                                <Suspense>
                                    <ProtectedRoute policy={policy(auth(), role('admin'))}>
                                        <EditPost/>
+                                   </ProtectedRoute>
+                               </Suspense>
+                           }
+                    />
+                    <Route path="/admin/dashboard"
+                           element={
+                               <Suspense>
+                                   <ProtectedRoute policy={policy(auth(), role('admin'))}>
+                                       <AdminDashboard/>
                                    </ProtectedRoute>
                                </Suspense>
                            }
