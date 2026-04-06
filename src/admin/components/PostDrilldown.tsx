@@ -31,9 +31,15 @@ const PostDrilldown = ({
 }: PostDrilldownProps) => {
     if (!title && !detailLoading && !detailError) {
         return (
-            <Card className="text-sm text-mono-500 dark:text-mono-400">
-                Select a post to inspect post-level metrics and chart breakdowns.
-            </Card>
+            <DashboardSection
+                title="Post drilldown"
+                description="Period metrics respond to the current date filter. Lifetime cards and reaction totals stay stable."
+                className={className}
+            >
+                <Card className="text-sm text-mono-500 dark:text-mono-400">
+                    Select a post to inspect post-level metrics and chart breakdowns.
+                </Card>
+            </DashboardSection>
         );
     }
 

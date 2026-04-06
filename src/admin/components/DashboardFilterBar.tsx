@@ -121,17 +121,11 @@ const DashboardFilterBar = ({
                 <Select
                     label="Selected post"
                     className="w-full md:max-w-md"
-                    value={filters.selectedPostId ?? ""}
-                    options={[
-                        {
-                            label: postsLoading ? "Loading posts..." : "All posts",
-                            value: ""
-                        },
-                        ...postOptions.map((option) => ({
-                            label: option.title,
-                            value: option.id
-                        }))
-                    ]}
+                    value={filters.selectedPostId ?? postOptions[0]?.id ?? ""}
+                    options={postOptions.map((option) => ({
+                        label: postsLoading ? "Loading posts..." : option.title,
+                        value: option.id
+                    }))}
                     onChange={(value) => onSelectedPostChange(value || null)}
                 />
             </div>
