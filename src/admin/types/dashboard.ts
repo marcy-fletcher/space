@@ -9,7 +9,7 @@ export interface DashboardDateFilter {
     selectedPostId: string | null;
 }
 
-export type DashboardCardKind = 'number' | 'currency' | 'percentage' | 'ratio' | 'trend' | 'text';
+export type DashboardCardKind = 'number' | 'currency' | 'percentage' | 'trend' | 'text';
 
 export interface OverviewCard {
     label: string;
@@ -20,24 +20,26 @@ export interface OverviewCard {
 
 export interface OverviewChartPoint {
     date: DashboardDateString;
+    visits: number;
+    debugLogs: number;
     posts: number;
     comments: number;
-    reactions: number;
 }
 
 export interface PostSeriesPoint {
     date: DashboardDateString;
     comments: number;
-    reactions: number;
 }
 
 export interface RankedPostRow {
     postId: string;
     title: string;
-    slug: string | null;
-    rank: number;
+    publicationState: 'draft' | 'published' | 'scheduled' | 'archived';
+    createdAt: DashboardDateString;
+    lifetimeViews: number;
     lifetimeComments: number;
-    periodComments: number;
+    lifetimeReactions: number;
+    periodCommentsCreated: number;
 }
 
 export interface ReactionTotal {

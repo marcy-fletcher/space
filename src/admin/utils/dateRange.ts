@@ -15,17 +15,35 @@ function isDateOnlyString(value: string): boolean {
     return /^\d{4}-\d{2}-\d{2}$/.test(value);
 }
 
-function toLocalDate(value: Date | DashboardDateString): Date {
+function toLocalDate(value: Date | DashboardDateString): Date | null {
     if (value instanceof Date) {
+        if (Number.isNaN(value.getTime())) {
+            return null;
+        }
+
         return new Date(value.getFullYear(), value.getMonth(), value.getDate());
     }
 
     if (isDateOnlyString(value)) {
         const [year, month, day] = value.split('-').map(Number);
-        return new Date(year, month - 1, day);
+        const date = new Date(year, month - 1, day);
+
+        if (
+            date.getFullYear() !== year ||
+            date.getMonth() !== month - 1 ||
+            date.getDate() !== day
+        ) {
+            return null;
+        }
+
+        return date;
     }
 
     const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+        return null;
+    }
+
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
@@ -37,31 +55,32 @@ function formatLocalDate(value: Date): DashboardDateString {
     ].join('-');
 }
 
-export function normalizeInclusiveStart(value: string | Date | null | undefined): DashboardDateString | null {
+function toDateString(value: Date | DashboardDateString | null | undefined): DashboardDateString | null {
     if (value == null || value === '') {
         return null;
     }
 
-    return formatLocalDate(toLocalDate(value));
+    const date = toLocalDate(value);
+    if (!date) {
+        return null;
+    }
+
+    return formatLocalDate(date);
+}
+
+export function normalizeInclusiveStart(value: string | Date | null | undefined): DashboardDateString | null {
+    return toDateString(value);
 }
 
 export function normalizeInclusiveEnd(value: string | Date | null | undefined): DashboardDateString | null {
-    if (value == null || value === '') {
-        return null;
-    }
-
-    return formatLocalDate(toLocalDate(value));
+    return toDateString(value);
 }
 
 export function normalizeDateRange(range: DashboardDateRange): DashboardDateRange {
-    const start = normalizeInclusiveStart(range.start);
-    const end = normalizeInclusiveEnd(range.end);
-
-    if (start && end && isInvertedDateRange({ start, end })) {
-        return { start: end, end: start };
-    }
-
-    return { start, end };
+    return {
+        start: normalizeInclusiveStart(range.start),
+        end: normalizeInclusiveEnd(range.end)
+    };
 }
 
 export function isInvertedDateRange(range: DashboardDateRange): boolean {
@@ -69,14 +88,21 @@ export function isInvertedDateRange(range: DashboardDateRange): boolean {
         return false;
     }
 
-    return toLocalDate(range.start).getTime() > toLocalDate(range.end).getTime();
+    const start = toLocalDate(range.start);
+    const end = toLocalDate(range.end);
+
+    if (!start || !end) {
+        return false;
+    }
+
+    return start.getTime() > end.getTime();
 }
 
 export function resolveDateRangePreset(
     preset: DashboardDatePreset,
     anchorDate: Date = new Date()
 ): DashboardDateRange {
-    const today = toLocalDate(anchorDate);
+    const today = toLocalDate(anchorDate) ?? new Date();
 
     if (preset === 'all') {
         return { start: null, end: null };
@@ -92,23 +118,28 @@ export function resolveDateRangePreset(
 }
 
 export function toOpenEndedStartBoundary(value: DashboardDateString | null | undefined): Date | null {
-    if (!value) {
+    const date = toLocalDate(value ?? '');
+    if (!date) {
         return null;
     }
 
-    const date = toLocalDate(value);
     return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
 }
 
 export function toOpenEndedEndBoundary(value: DashboardDateString | null | undefined): Date | null {
-    if (!value) {
+    const date = toLocalDate(value ?? '');
+    if (!date) {
         return null;
     }
 
-    const date = toLocalDate(value);
     return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
 }
 
-export function getDailyBucketLabel(value: string | Date): DashboardDateString {
-    return formatLocalDate(toLocalDate(value));
+export function getDailyBucketLabel(value: string | Date): DashboardDateString | null {
+    const date = toLocalDate(value);
+    if (!date) {
+        return null;
+    }
+
+    return formatLocalDate(date);
 }
