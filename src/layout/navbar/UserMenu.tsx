@@ -5,7 +5,7 @@ import Divider from "../../common/components/Divider.tsx";
 import Button from "../../common/components/Button.tsx";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUserPlus, faRightFromBracket, faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faChartLine, faUserPlus, faRightFromBracket, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {useAuth} from "../../auth/hooks/useAuth.ts";
 import {useAuthStore} from "../../auth/hooks/useAuthStore.ts";
 import {formatDate} from "../../utils/formatDate.ts";
@@ -44,10 +44,20 @@ const UserMenu = () => {
                 <RequirePolicy policy={policy(auth(), role('admin'))}>
                     <LinkButton navigateTo={'/posts/create'} variant="link" size="small" shape="square"
                                 className="w-full justify-start">
-                    <span className="flex items-center gap-2">
-                        <FontAwesomeIcon icon={faPlus} className="w-4"/>
-                        Create post
-                    </span>
+                        <span className="flex items-center gap-2">
+                            <FontAwesomeIcon icon={faPlus} className="w-4"/>
+                            Create post
+                        </span>
+                    </LinkButton>
+                </RequirePolicy>
+
+                <RequirePolicy policy={policy(auth(), role('admin'))}>
+                    <LinkButton navigateTo={'/admin/dashboard'} variant="link" size="small" shape="square"
+                                className="w-full justify-start">
+                        <span className="flex items-center gap-2">
+                            <FontAwesomeIcon icon={faChartLine} className="w-4"/>
+                            Admin dashboard
+                        </span>
                     </LinkButton>
                 </RequirePolicy>
 
