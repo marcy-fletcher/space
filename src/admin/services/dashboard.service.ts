@@ -162,6 +162,29 @@ async function getPostsBaseRows(): Promise<DashboardPostRowDto[]> {
     return (data ?? []) as unknown as DashboardPostRowDto[];
 }
 
+async function getPostBaseRow(postId: string): Promise<DashboardPostRowDto | null> {
+    const supabase = await getSupabase();
+    const {data, error} = await supabase
+        .schema("blog")
+        .from("posts")
+        .select(`
+            id,
+            created_at,
+            is_published,
+            post_contents(title),
+            post_views(views),
+            post_comment_counts(comment_count)
+        `)
+        .eq("id", postId)
+        .maybeSingle();
+
+    if (error) {
+        throw error;
+    }
+
+    return data ? data as unknown as DashboardPostRowDto : null;
+}
+
 async function countRowsInRange(
     schema: "blog" | "logging",
     table: string,
@@ -273,6 +296,26 @@ async function getCommentsInRange(filters: DashboardQueryFilters): Promise<Dashb
     return (data ?? []) as DashboardCommentDto[];
 }
 
+async function getCommentsForPostInRange(filters: DashboardQueryFilters, postId: string): Promise<DashboardCommentDto[]> {
+    const supabase = await getSupabase();
+    let query = supabase
+        .schema("blog")
+        .from("comments")
+        .select("post_id, created_at")
+        .eq("is_deleted", false)
+        .eq("post_id", postId);
+
+    query = applyDateRange(query, filters, "created_at");
+
+    const {data, error} = await query;
+
+    if (error) {
+        throw error;
+    }
+
+    return (data ?? []) as DashboardCommentDto[];
+}
+
 async function getGlobalDebugLogsInRange(filters: DashboardQueryFilters): Promise<DashboardDebugLogDto[]> {
     const supabase = await getSupabase();
     let query = supabase
@@ -341,6 +384,21 @@ async function getAllReactions(): Promise<DashboardReactionDto[]> {
     return (data ?? []) as DashboardReactionDto[];
 }
 
+async function getReactionsForPost(postId: string): Promise<DashboardReactionDto[]> {
+    const supabase = await getSupabase();
+    const {data, error} = await supabase
+        .schema("blog")
+        .from("post_reactions")
+        .select("post_id, reaction")
+        .eq("post_id", postId);
+
+    if (error) {
+        throw error;
+    }
+
+    return (data ?? []) as DashboardReactionDto[];
+}
+
 function buildReactionTotals(reactions: DashboardReactionDto[]): ReactionTotal[] {
     const counts = reactions.reduce((accumulator, reaction) => {
         accumulator.set(reaction.reaction, (accumulator.get(reaction.reaction) ?? 0) + 1);
@@ -352,15 +410,14 @@ function buildReactionTotals(reactions: DashboardReactionDto[]): ReactionTotal[]
         .sort((left, right) => right.total - left.total || left.reaction.localeCompare(right.reaction));
 }
 
-function getEmptyPostDebugSeries(filters: DashboardQueryFilters, comments: DashboardCommentDto[], postId: string): PostSeriesPoint[] {
-    const postComments = comments.filter((entry) => String(entry.post_id) === postId);
-    const buckets = buildBuckets(filters.start, filters.end, postComments.map((row) => row.created_at));
+function getEmptyPostDebugSeries(filters: DashboardQueryFilters, comments: DashboardCommentDto[]): PostSeriesPoint[] {
+    const buckets = buildBuckets(filters.start, filters.end, comments.map((row) => row.created_at));
 
     if (buckets.length === 0) {
         return [];
     }
 
-    const commentsByDay = countByDay(postComments);
+    const commentsByDay = countByDay(comments);
 
     return buckets.map((date) => ({
         date,
@@ -486,19 +543,17 @@ export async function getDashboardPostDetail(
     filters: DashboardQueryFilters,
     postId: string
 ): Promise<SelectedPostDetail> {
-    const [posts, comments, reactions] = await Promise.all([
-        getPostsBaseRows(),
-        getCommentsInRange(filters),
-        getAllReactions()
+    const [post, comments, reactions] = await Promise.all([
+        getPostBaseRow(postId),
+        getCommentsForPostInRange(filters, postId),
+        getReactionsForPost(postId)
     ]);
 
-    const post = posts.find((entry) => String(entry.id) === postId);
     if (!post) {
         throw new Error("Post not found.");
     }
 
-    const postReactions = reactions.filter((entry) => String(entry.post_id) === postId);
-    const periodComments = comments.filter((entry) => String(entry.post_id) === postId).length;
+    const periodComments = comments.length;
 
     return {
         postId,
@@ -511,7 +566,7 @@ export async function getDashboardPostDetail(
             {label: "Comments created", value: periodComments, kind: "number", hint: PERIOD_HINT},
             {label: "Debug logs", value: 0, kind: "number", hint: PERIOD_HINT}
         ],
-        reactionTotals: buildReactionTotals(postReactions)
+        reactionTotals: buildReactionTotals(reactions)
     };
 }
 
@@ -519,8 +574,8 @@ export async function getDashboardPostSeries(
     filters: DashboardQueryFilters,
     postId: string
 ): Promise<PostSeriesPoint[]> {
-    const comments = await getCommentsInRange(filters);
-    return getEmptyPostDebugSeries(filters, comments, postId);
+    const comments = await getCommentsForPostInRange(filters, postId);
+    return getEmptyPostDebugSeries(filters, comments);
 }
 
 export async function getPostOptions(): Promise<DashboardPostOption[]> {

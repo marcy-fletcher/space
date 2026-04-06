@@ -1,6 +1,7 @@
 import {useMemo} from "react";
 import {useQuery} from "@tanstack/react-query";
 import type {DashboardQueryFilters} from "../types/dashboard.ts";
+import {isInvertedDateRange} from "../utils/dateRange.ts";
 import {
     getDashboardOverview,
     getDashboardOverviewSeries,
@@ -24,11 +25,16 @@ export const useDashboardData = (
     enabled: boolean
 ) => {
     const filterKey = useMemo(() => buildFilterKey(effectiveFilters), [effectiveFilters]);
+    const filtersAreValid = useMemo(
+        () => !isInvertedDateRange({start: effectiveFilters.start, end: effectiveFilters.end}),
+        [effectiveFilters.end, effectiveFilters.start]
+    );
+    const queriesEnabled = enabled && filtersAreValid;
 
     const overviewQuery = useQuery({
         queryKey: ["admin-dashboard", "overview", ...filterKey],
         queryFn: () => getDashboardOverview(effectiveFilters),
-        enabled,
+        enabled: queriesEnabled,
         staleTime: 1000 * 60 * 5,
         retry: 2
     });
@@ -36,7 +42,7 @@ export const useDashboardData = (
     const overviewSeriesQuery = useQuery({
         queryKey: ["admin-dashboard", "overview-series", ...filterKey],
         queryFn: () => getDashboardOverviewSeries(effectiveFilters),
-        enabled,
+        enabled: queriesEnabled,
         staleTime: 1000 * 60 * 5,
         retry: 2
     });
@@ -44,7 +50,7 @@ export const useDashboardData = (
     const rankedPostsQuery = useQuery({
         queryKey: ["admin-dashboard", "ranked-posts", ...filterKey],
         queryFn: () => getRankedPosts(effectiveFilters),
-        enabled,
+        enabled: queriesEnabled,
         staleTime: 1000 * 60 * 5,
         retry: 2
     });
@@ -52,7 +58,7 @@ export const useDashboardData = (
     const postOptionsQuery = useQuery({
         queryKey: ["admin-dashboard", "post-options"],
         queryFn: getPostOptions,
-        enabled,
+        enabled: queriesEnabled,
         staleTime: 1000 * 60 * 5,
         retry: 2
     });
@@ -60,7 +66,7 @@ export const useDashboardData = (
     const selectedPostDetailQuery = useQuery({
         queryKey: ["admin-dashboard", "selected-post-detail", ...filterKey, selectedPostId ?? ""],
         queryFn: () => getDashboardPostDetail(effectiveFilters, selectedPostId!),
-        enabled: enabled && Boolean(selectedPostId),
+        enabled: queriesEnabled && Boolean(selectedPostId),
         staleTime: 1000 * 60 * 5,
         retry: 2
     });
@@ -68,7 +74,7 @@ export const useDashboardData = (
     const selectedPostSeriesQuery = useQuery({
         queryKey: ["admin-dashboard", "selected-post-series", ...filterKey, selectedPostId ?? ""],
         queryFn: () => getDashboardPostSeries(effectiveFilters, selectedPostId!),
-        enabled: enabled && Boolean(selectedPostId),
+        enabled: queriesEnabled && Boolean(selectedPostId),
         staleTime: 1000 * 60 * 5,
         retry: 2
     });
@@ -85,6 +91,7 @@ export const useDashboardData = (
         postOptionsQuery,
         selectedPostDetailQuery,
         selectedPostSeriesQuery,
+        filtersAreValid,
         topRankedPosts
     };
 };

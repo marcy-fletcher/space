@@ -9,6 +9,13 @@ export interface DashboardDateFilter {
     selectedPostId: string | null;
 }
 
+export interface DashboardFilterPatch {
+    preset?: DashboardDatePreset;
+    start?: DashboardDateString | null;
+    end?: DashboardDateString | null;
+    selectedPostId?: string | null;
+}
+
 export interface DashboardQueryFilters {
     preset: DashboardDatePreset;
     start: DashboardDateString | null;

@@ -1,7 +1,7 @@
 import type {StateCreator} from "zustand/vanilla";
 import {create} from "zustand";
 import {devtools} from "zustand/middleware";
-import type {DashboardDatePreset, DashboardDateString} from "../types/dashboard.ts";
+import type {DashboardDatePreset, DashboardDateString, DashboardFilterPatch} from "../types/dashboard.ts";
 
 export const defaultDashboardPreset: DashboardDatePreset = "30d";
 
@@ -18,7 +18,7 @@ export interface DashboardStoreActions {
     setStart: (start: DashboardDateString | null) => void;
     setEnd: (end: DashboardDateString | null) => void;
     setSelectedPostId: (postId: string | null) => void;
-    setFilters: (filters?: Partial<DashboardStoreState>) => void;
+    setFilters: (filters?: DashboardFilterPatch) => void;
     clearCustomRange: () => void;
     resetSelectedPost: () => void;
     resetFilters: () => void;
