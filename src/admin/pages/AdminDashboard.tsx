@@ -12,6 +12,37 @@ import RankedPostsTable from "../components/RankedPostsTable.tsx";
 import PostDrilldown from "../components/PostDrilldown.tsx";
 import Card from "../../layout/Card.tsx";
 
+function OverviewCardsLoadingState() {
+    return (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {Array.from({length: 6}).map((_, index) => (
+                <Card key={index} className="h-32 animate-pulse bg-mono-50 dark:bg-mono-800"/>
+            ))}
+        </div>
+    );
+}
+
+function RankedPostsLoadingState() {
+    return (
+        <Card className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+                <div className="h-6 w-40 animate-pulse rounded bg-mono-200 dark:bg-mono-700"/>
+                <div className="h-4 w-80 max-w-full animate-pulse rounded bg-mono-100 dark:bg-mono-800"/>
+            </div>
+
+            <div className="overflow-hidden rounded-lg border border-mono-200 dark:border-mono-700">
+                <div className="h-11 animate-pulse border-b border-mono-200 bg-mono-50 dark:border-mono-700 dark:bg-mono-800"/>
+                {Array.from({length: 5}).map((_, index) => (
+                    <div
+                        key={index}
+                        className="h-14 animate-pulse border-b border-mono-200 bg-white last:border-b-0 dark:border-mono-700 dark:bg-mono-800"
+                    />
+                ))}
+            </div>
+        </Card>
+    );
+}
+
 const AdminDashboard = () => {
     const {
         filters,
@@ -90,13 +121,17 @@ const AdminDashboard = () => {
                 title="Overview"
                 description="Period cards respond to the current range. Lifetime cards stay stable."
             >
-                <MetricCardsGrid
-                    cards={overviewQuery.data ?? []}
-                    emptyMessage={hasInvalidCustomRange
-                        ? "Fix the custom date range to load overview metrics."
-                        : "No overview metrics are available for this selection."
-                    }
-                />
+                {overviewQuery.isLoading ? (
+                    <OverviewCardsLoadingState/>
+                ) : (
+                    <MetricCardsGrid
+                        cards={overviewQuery.data ?? []}
+                        emptyMessage={hasInvalidCustomRange
+                            ? "Fix the custom date range to load overview metrics."
+                            : "No overview metrics are available for this selection."
+                        }
+                    />
+                )}
             </DashboardSection>
 
             <DashboardSection
@@ -137,6 +172,8 @@ const AdminDashboard = () => {
                     <Card className="border border-red-200 bg-red-50/70 text-sm font-medium text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-300">
                         {rankedPostsQuery.error.message}
                     </Card>
+                ) : rankedPostsQuery.isLoading ? (
+                    <RankedPostsLoadingState/>
                 ) : (
                     <RankedPostsTable
                         posts={rankedPosts}
