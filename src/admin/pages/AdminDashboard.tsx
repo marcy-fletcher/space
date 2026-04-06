@@ -11,6 +11,9 @@ import TopPostsChart from "../components/charts/TopPostsChart.tsx";
 import RankedPostsTable from "../components/RankedPostsTable.tsx";
 import PostDrilldown from "../components/PostDrilldown.tsx";
 import Card from "../../layout/Card.tsx";
+import type {RankedPostRow} from "../types/dashboard.ts";
+
+const EMPTY_RANKED_POSTS: RankedPostRow[] = [];
 
 function OverviewCardsLoadingState() {
     return (
@@ -67,7 +70,7 @@ const AdminDashboard = () => {
 
     useDocumentTitle("Admin dashboard");
 
-    const rankedPosts = rankedPostsQuery.data ?? [];
+    const rankedPosts = rankedPostsQuery.data ?? EMPTY_RANKED_POSTS;
     const selectedPostDetail = selectedPostDetailQuery.data;
 
     useEffect(() => {
