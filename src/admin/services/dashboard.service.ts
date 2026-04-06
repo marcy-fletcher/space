@@ -60,6 +60,7 @@ interface CountQuery extends PromiseLike<CountQueryResult> {
 }
 
 interface CountRangeQuery extends CountQuery {
+    eq: (column: string, value: unknown) => CountRangeQuery;
     gte: (column: string, value: string) => CountRangeQuery;
     lte: (column: string, value: string) => CountRangeQuery;
 }
