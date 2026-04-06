@@ -9,6 +9,12 @@ export interface DashboardDateFilter {
     selectedPostId: string | null;
 }
 
+export interface DashboardQueryFilters {
+    preset: DashboardDatePreset;
+    start: DashboardDateString | null;
+    end: DashboardDateString | null;
+}
+
 export type DashboardCardKind = 'number' | 'currency' | 'percentage' | 'trend' | 'text';
 
 export interface OverviewCard {
@@ -52,6 +58,5 @@ export interface SelectedPostDetail {
     postId: string;
     title: string;
     cards: OverviewCard[];
-    activityPoints: PostSeriesPoint[];
     reactionTotals: ReactionTotal[];
 }

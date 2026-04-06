@@ -4,7 +4,12 @@ import {
     defaultDashboardPreset,
     useDashboardStore
 } from "../model/dashboardStore.ts";
-import type {DashboardDateFilter, DashboardDatePreset, DashboardDateString} from "../types/dashboard.ts";
+import type {
+    DashboardDateFilter,
+    DashboardDatePreset,
+    DashboardDateString,
+    DashboardQueryFilters
+} from "../types/dashboard.ts";
 import {
     isInvertedDateRange,
     normalizeInclusiveEnd,
@@ -19,11 +24,6 @@ export interface DashboardUrlParams {
     selectedPostId?: string;
 }
 
-export interface DashboardEffectiveFilters extends DashboardDateFilter {
-    start: DashboardDateString | null;
-    end: DashboardDateString | null;
-}
-
 function toUrlParams(filters: DashboardDateFilter): DashboardUrlParams {
     return {
         preset: filters.preset === defaultDashboardPreset ? undefined : filters.preset,
@@ -33,7 +33,7 @@ function toUrlParams(filters: DashboardDateFilter): DashboardUrlParams {
     };
 }
 
-function toStoredFilters(params?: DashboardUrlParams): Partial<DashboardDateFilter> {
+function toStoredFilters(params?: DashboardUrlParams): DashboardDateFilter {
     return {
         preset: params?.preset ?? defaultDashboardPreset,
         start: normalizeInclusiveStart(params?.start),
@@ -42,13 +42,21 @@ function toStoredFilters(params?: DashboardUrlParams): Partial<DashboardDateFilt
     };
 }
 
-export function resolveEffectiveDashboardRange(filters: DashboardDateFilter): DashboardEffectiveFilters {
+export function resolveEffectiveDashboardRange(filters: DashboardDateFilter): DashboardQueryFilters {
+    if (filters.start || filters.end) {
+        return {
+            preset: filters.preset,
+            start: filters.start,
+            end: filters.end
+        };
+    }
+
     const presetRange = resolveDateRangePreset(filters.preset);
 
     return {
-        ...filters,
-        start: filters.start ?? presetRange.start,
-        end: filters.end ?? presetRange.end
+        preset: filters.preset,
+        start: presetRange.start,
+        end: presetRange.end
     };
 }
 
@@ -82,7 +90,7 @@ export const useDashboardFilters = () => {
     );
 
     const hasCustomRange = Boolean(start || end);
-    const hasInvalidCustomRange = isInvertedDateRange({start, end});
+    const hasInvalidCustomRange = hasCustomRange && isInvertedDateRange({start, end});
     const validationMessage = hasInvalidCustomRange
         ? "Start date must be on or before end date."
         : null;

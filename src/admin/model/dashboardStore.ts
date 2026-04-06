@@ -52,11 +52,18 @@ const dashboardStoreSlice: StateCreator<
     setFilters: (filters) => {
         const state = get();
 
+        if (!filters) {
+            set({...state, initialized: true}, false, "setFilters");
+            return;
+        }
+
         set({
-            preset: filters?.preset ?? state.preset,
-            start: filters?.start ?? state.start,
-            end: filters?.end ?? state.end,
-            selectedPostId: filters?.selectedPostId ?? state.selectedPostId,
+            preset: Object.prototype.hasOwnProperty.call(filters, "preset") ? filters.preset ?? state.preset : state.preset,
+            start: Object.prototype.hasOwnProperty.call(filters, "start") ? filters.start ?? null : state.start,
+            end: Object.prototype.hasOwnProperty.call(filters, "end") ? filters.end ?? null : state.end,
+            selectedPostId: Object.prototype.hasOwnProperty.call(filters, "selectedPostId")
+                ? filters.selectedPostId ?? null
+                : state.selectedPostId,
             initialized: true
         }, false, "setFilters");
     },

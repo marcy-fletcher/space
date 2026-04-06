@@ -1,5 +1,6 @@
 import {getSupabase} from "../../utils/supabase.ts";
 import type {
+    DashboardQueryFilters,
     OverviewCard,
     OverviewChartPoint,
     PostSeriesPoint,
@@ -8,7 +9,6 @@ import type {
     SelectedPostDetail
 } from "../types/dashboard.ts";
 import {getDailyBucketLabel, toOpenEndedEndBoundary, toOpenEndedStartBoundary} from "../utils/dateRange.ts";
-import type {DashboardEffectiveFilters} from "../hooks/useDashboardFilters.ts";
 
 interface DashboardPostRowDto {
     id: number;
@@ -56,7 +56,7 @@ const LIFETIME_HINT = "Lifetime";
 function applyDateRange<TQuery extends {
     gte: (column: string, value: string) => TQuery;
     lte: (column: string, value: string) => TQuery;
-}>(query: TQuery, filters: DashboardEffectiveFilters, column: string): TQuery {
+}>(query: TQuery, filters: DashboardQueryFilters, column: string): TQuery {
     const startBoundary = toOpenEndedStartBoundary(filters.start);
     const endBoundary = toOpenEndedEndBoundary(filters.end);
 
@@ -162,7 +162,99 @@ async function getPostsBaseRows(): Promise<DashboardPostRowDto[]> {
     return (data ?? []) as unknown as DashboardPostRowDto[];
 }
 
-async function getCommentsInRange(filters: DashboardEffectiveFilters): Promise<DashboardCommentDto[]> {
+async function countRowsInRange(
+    schema: "blog" | "logging",
+    table: string,
+    column: string,
+    filters: DashboardQueryFilters,
+    configure?: (query: {
+        eq: (column: string, value: unknown) => unknown;
+        gte: (column: string, value: string) => unknown;
+        lte: (column: string, value: string) => unknown;
+    }) => unknown
+): Promise<number> {
+    const supabase = await getSupabase();
+    let query: any = supabase
+        .schema(schema)
+        .from(table)
+        .select("*", {count: "exact", head: true});
+
+    if (configure) {
+        query = configure(query);
+    }
+
+    query = applyDateRange(query, filters, column);
+
+    const {count, error} = await query;
+
+    if (error) {
+        throw error;
+    }
+
+    return count ?? 0;
+}
+
+async function countRows(
+    schema: "blog" | "logging",
+    table: string,
+    configure?: (query: {
+        eq: (column: string, value: unknown) => unknown;
+    }) => unknown
+): Promise<number> {
+    const supabase = await getSupabase();
+    let query: any = supabase
+        .schema(schema)
+        .from(table)
+        .select("*", {count: "exact", head: true});
+
+    if (configure) {
+        query = configure(query);
+    }
+
+    const {count, error} = await query;
+
+    if (error) {
+        throw error;
+    }
+
+    return count ?? 0;
+}
+
+async function getTotalViews(): Promise<number> {
+    const supabase = await getSupabase();
+    const {data, error} = await supabase
+        .schema("blog")
+        .from("post_views")
+        .select("views");
+
+    if (error) {
+        throw error;
+    }
+
+    return sumValues(
+        data ?? [],
+        (row) => typeof row.views === "number" ? row.views : 0
+    );
+}
+
+async function getTotalComments(): Promise<number> {
+    const supabase = await getSupabase();
+    const {data, error} = await supabase
+        .schema("blog")
+        .from("post_comment_counts")
+        .select("comment_count");
+
+    if (error) {
+        throw error;
+    }
+
+    return sumValues(
+        data ?? [],
+        (row) => typeof row.comment_count === "number" ? row.comment_count : 0
+    );
+}
+
+async function getCommentsInRange(filters: DashboardQueryFilters): Promise<DashboardCommentDto[]> {
     const supabase = await getSupabase();
     let query = supabase
         .schema("blog")
@@ -181,7 +273,7 @@ async function getCommentsInRange(filters: DashboardEffectiveFilters): Promise<D
     return (data ?? []) as DashboardCommentDto[];
 }
 
-async function getGlobalDebugLogsInRange(filters: DashboardEffectiveFilters): Promise<DashboardDebugLogDto[]> {
+async function getGlobalDebugLogsInRange(filters: DashboardQueryFilters): Promise<DashboardDebugLogDto[]> {
     const supabase = await getSupabase();
     let query = supabase
         .schema("logging")
@@ -199,7 +291,7 @@ async function getGlobalDebugLogsInRange(filters: DashboardEffectiveFilters): Pr
     return (data ?? []) as DashboardDebugLogDto[];
 }
 
-async function getVisitsInRange(filters: DashboardEffectiveFilters): Promise<DashboardDebugLogDto[]> {
+async function getVisitsInRange(filters: DashboardQueryFilters): Promise<DashboardDebugLogDto[]> {
     const supabase = await getSupabase();
     let query = supabase
         .schema("logging")
@@ -217,7 +309,7 @@ async function getVisitsInRange(filters: DashboardEffectiveFilters): Promise<Das
     return (data ?? []) as DashboardDebugLogDto[];
 }
 
-async function getPostsCreatedInRange(filters: DashboardEffectiveFilters): Promise<Array<{created_at: string}>> {
+async function getPostsCreatedInRange(filters: DashboardQueryFilters): Promise<Array<{created_at: string}>> {
     const supabase = await getSupabase();
     let query = supabase
         .schema("blog")
@@ -249,43 +341,6 @@ async function getAllReactions(): Promise<DashboardReactionDto[]> {
     return (data ?? []) as DashboardReactionDto[];
 }
 
-async function getPostTitle(postId: string): Promise<string | null> {
-    const supabase = await getSupabase();
-    const {data, error} = await supabase
-        .schema("blog")
-        .from("posts")
-        .select("post_contents(title)")
-        .eq("id", postId)
-        .single();
-
-    if (error) {
-        throw error;
-    }
-
-    const row = data as unknown as {post_contents: {title: string} | Array<{title: string}> | null} | null;
-    return readSingleRelation(row?.post_contents)?.title ?? null;
-}
-
-async function getPostDebugLogsInRange(filters: DashboardEffectiveFilters, title: string): Promise<DashboardDebugLogDto[]> {
-    const supabase = await getSupabase();
-    let query = supabase
-        .schema("logging")
-        .from("debug_logs")
-        .select("created_at")
-        .eq("metadata->>pageName", "Post")
-        .eq("metadata->>name", title);
-
-    query = applyDateRange(query, filters, "created_at");
-
-    const {data, error} = await query;
-
-    if (error) {
-        throw error;
-    }
-
-    return (data ?? []) as DashboardDebugLogDto[];
-}
-
 function buildReactionTotals(reactions: DashboardReactionDto[]): ReactionTotal[] {
     const counts = reactions.reduce((accumulator, reaction) => {
         accumulator.set(reaction.reaction, (accumulator.get(reaction.reaction) ?? 0) + 1);
@@ -297,42 +352,60 @@ function buildReactionTotals(reactions: DashboardReactionDto[]): ReactionTotal[]
         .sort((left, right) => right.total - left.total || left.reaction.localeCompare(right.reaction));
 }
 
-export async function getDashboardOverview(filters: DashboardEffectiveFilters): Promise<OverviewCard[]> {
+function getEmptyPostDebugSeries(filters: DashboardQueryFilters, comments: DashboardCommentDto[], postId: string): PostSeriesPoint[] {
+    const postComments = comments.filter((entry) => String(entry.post_id) === postId);
+    const buckets = buildBuckets(filters.start, filters.end, postComments.map((row) => row.created_at));
+
+    if (buckets.length === 0) {
+        return [];
+    }
+
+    const commentsByDay = countByDay(postComments);
+
+    return buckets.map((date) => ({
+        date,
+        comments: commentsByDay.get(date) ?? 0,
+        debugLogs: 0
+    }));
+}
+
+export async function getDashboardOverview(filters: DashboardQueryFilters): Promise<OverviewCard[]> {
     const [
-        visits,
-        debugLogs,
-        createdPosts,
-        comments,
-        posts,
-        reactions
+        visitCount,
+        debugLogCount,
+        createdPostCount,
+        commentCount,
+        publishedCount,
+        draftCount,
+        totalViews,
+        totalComments,
+        reactionCount
     ] = await Promise.all([
-        getVisitsInRange(filters),
-        getGlobalDebugLogsInRange(filters),
-        getPostsCreatedInRange(filters),
-        getCommentsInRange(filters),
-        getPostsBaseRows(),
-        getAllReactions()
+        countRowsInRange("logging", "visits", "created_at", filters),
+        countRowsInRange("logging", "debug_logs", "created_at", filters),
+        countRowsInRange("blog", "posts", "created_at", filters),
+        countRowsInRange("blog", "comments", "created_at", filters, (query) => query.eq("is_deleted", false)),
+        countRows("blog", "posts", (query) => query.eq("is_published", true)),
+        countRows("blog", "posts", (query) => query.eq("is_published", false)),
+        getTotalViews(),
+        getTotalComments(),
+        countRows("blog", "post_reactions")
     ]);
 
-    const publishedCount = posts.filter((post) => post.is_published).length;
-    const draftCount = posts.length - publishedCount;
-    const totalViews = sumValues(posts, getPostViews);
-    const totalComments = sumValues(posts, getPostCommentCount);
-
     return [
-        {label: "Visits", value: visits.length, kind: "number", hint: PERIOD_HINT},
-        {label: "Debug logs", value: debugLogs.length, kind: "number", hint: PERIOD_HINT},
-        {label: "Posts created", value: createdPosts.length, kind: "number", hint: PERIOD_HINT},
-        {label: "Comments created", value: comments.length, kind: "number", hint: PERIOD_HINT},
+        {label: "Visits", value: visitCount, kind: "number", hint: PERIOD_HINT},
+        {label: "Debug logs", value: debugLogCount, kind: "number", hint: PERIOD_HINT},
+        {label: "Posts created", value: createdPostCount, kind: "number", hint: PERIOD_HINT},
+        {label: "Comments created", value: commentCount, kind: "number", hint: PERIOD_HINT},
         {label: "Published posts", value: publishedCount, kind: "number", hint: LIFETIME_HINT},
         {label: "Draft posts", value: draftCount, kind: "number", hint: LIFETIME_HINT},
         {label: "Total views", value: totalViews, kind: "number", hint: LIFETIME_HINT},
         {label: "Total comments", value: totalComments, kind: "number", hint: LIFETIME_HINT},
-        {label: "Total reactions", value: reactions.length, kind: "number", hint: LIFETIME_HINT}
+        {label: "Total reactions", value: reactionCount, kind: "number", hint: LIFETIME_HINT}
     ];
 }
 
-export async function getDashboardOverviewSeries(filters: DashboardEffectiveFilters): Promise<OverviewChartPoint[]> {
+export async function getDashboardOverviewSeries(filters: DashboardQueryFilters): Promise<OverviewChartPoint[]> {
     const [visits, debugLogs, createdPosts, comments] = await Promise.all([
         getVisitsInRange(filters),
         getGlobalDebugLogsInRange(filters),
@@ -366,7 +439,7 @@ export async function getDashboardOverviewSeries(filters: DashboardEffectiveFilt
     }));
 }
 
-export async function getRankedPosts(filters: DashboardEffectiveFilters): Promise<RankedPostRow[]> {
+export async function getRankedPosts(filters: DashboardQueryFilters): Promise<RankedPostRow[]> {
     const [posts, comments, reactions] = await Promise.all([
         getPostsBaseRows(),
         getCommentsInRange(filters),
@@ -410,14 +483,13 @@ export async function getRankedPosts(filters: DashboardEffectiveFilters): Promis
 }
 
 export async function getDashboardPostDetail(
-    filters: DashboardEffectiveFilters,
+    filters: DashboardQueryFilters,
     postId: string
 ): Promise<SelectedPostDetail> {
-    const [posts, comments, reactions, title] = await Promise.all([
+    const [posts, comments, reactions] = await Promise.all([
         getPostsBaseRows(),
         getCommentsInRange(filters),
-        getAllReactions(),
-        getPostTitle(postId)
+        getAllReactions()
     ]);
 
     const post = posts.find((entry) => String(entry.id) === postId);
@@ -428,10 +500,6 @@ export async function getDashboardPostDetail(
     const postReactions = reactions.filter((entry) => String(entry.post_id) === postId);
     const periodComments = comments.filter((entry) => String(entry.post_id) === postId).length;
 
-    const postDebugLogs = title
-        ? await getPostDebugLogsInRange(filters, title)
-        : [];
-
     return {
         postId,
         title: getPostTitleLabel(post),
@@ -441,45 +509,18 @@ export async function getDashboardPostDetail(
             {label: "Views", value: getPostViews(post), kind: "number", hint: LIFETIME_HINT},
             {label: "Comments", value: getPostCommentCount(post), kind: "number", hint: LIFETIME_HINT},
             {label: "Comments created", value: periodComments, kind: "number", hint: PERIOD_HINT},
-            {label: "Debug logs", value: postDebugLogs.length, kind: "number", hint: PERIOD_HINT}
+            {label: "Debug logs", value: 0, kind: "number", hint: PERIOD_HINT}
         ],
-        activityPoints: [],
         reactionTotals: buildReactionTotals(postReactions)
     };
 }
 
 export async function getDashboardPostSeries(
-    filters: DashboardEffectiveFilters,
+    filters: DashboardQueryFilters,
     postId: string
 ): Promise<PostSeriesPoint[]> {
-    const [comments, title] = await Promise.all([
-        getCommentsInRange(filters),
-        getPostTitle(postId)
-    ]);
-
-    const postComments = comments.filter((entry) => String(entry.post_id) === postId);
-    const postDebugLogs = title
-        ? await getPostDebugLogsInRange(filters, title)
-        : [];
-
-    const allDates = [
-        ...postComments.map((row) => row.created_at),
-        ...postDebugLogs.map((row) => row.created_at)
-    ];
-
-    const buckets = buildBuckets(filters.start, filters.end, allDates);
-    if (buckets.length === 0) {
-        return [];
-    }
-
-    const commentsByDay = countByDay(postComments);
-    const debugLogsByDay = countByDay(postDebugLogs);
-
-    return buckets.map((date) => ({
-        date,
-        comments: commentsByDay.get(date) ?? 0,
-        debugLogs: debugLogsByDay.get(date) ?? 0
-    }));
+    const comments = await getCommentsInRange(filters);
+    return getEmptyPostDebugSeries(filters, comments, postId);
 }
 
 export async function getPostOptions(): Promise<DashboardPostOption[]> {

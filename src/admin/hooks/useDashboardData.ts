@@ -1,6 +1,6 @@
 import {useMemo} from "react";
 import {useQuery} from "@tanstack/react-query";
-import type {DashboardEffectiveFilters} from "./useDashboardFilters.ts";
+import type {DashboardQueryFilters} from "../types/dashboard.ts";
 import {
     getDashboardOverview,
     getDashboardOverviewSeries,
@@ -10,7 +10,7 @@ import {
     getRankedPosts
 } from "../services/dashboard.service.ts";
 
-function buildFilterKey(filters: DashboardEffectiveFilters): [string, string, string] {
+function buildFilterKey(filters: DashboardQueryFilters): [string, string, string] {
     return [
         filters.preset,
         filters.start ?? "",
@@ -19,7 +19,7 @@ function buildFilterKey(filters: DashboardEffectiveFilters): [string, string, st
 }
 
 export const useDashboardData = (
-    effectiveFilters: DashboardEffectiveFilters,
+    effectiveFilters: DashboardQueryFilters,
     selectedPostId: string | null,
     enabled: boolean
 ) => {
