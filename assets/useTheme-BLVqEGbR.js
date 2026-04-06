@@ -1,0 +1,1 @@
+import{a as t}from"./vendor-font-awesome-CAjWzo7i.js";import{T as o}from"./index-Cnv-BlJ9.js";const m=()=>{const e=t.useContext(o);if(e===void 0)throw new Error("useTheme must be used within a ThemeProvider");return e};export{m as u};
