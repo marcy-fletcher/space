@@ -24,9 +24,9 @@ const MetricCardsGrid = ({
 
     return (
         <div className={cn("grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3", className)}>
-            {cards.map((card) => (
+            {cards.map((card, index) => (
                 <MetricCard
-                    key={`${card.label}-${card.hint ?? "none"}`}
+                    key={`${index}-${card.label}-${card.kind}`}
                     card={card}
                 />
             ))}

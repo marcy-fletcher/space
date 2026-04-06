@@ -59,13 +59,26 @@ const RankedPostsTable = ({
                                     <tr
                                         key={post.postId}
                                         className={cn(
-                                            "cursor-pointer transition-colors hover:bg-primary-50 dark:hover:bg-primary-900/20",
+                                            "transition-colors hover:bg-primary-50 dark:hover:bg-primary-900/20 focus-within:bg-primary-50 dark:focus-within:bg-primary-900/20",
                                             isSelected && "bg-primary-50/80 dark:bg-primary-900/30"
                                         )}
                                         onClick={() => onSelectPostId(post.postId)}
                                     >
                                         <td className="px-4 py-3 text-sm font-medium text-mono-900 dark:text-mono-100">
-                                            {post.title}
+                                            <button
+                                                type="button"
+                                                className="w-full rounded-md text-left underline-offset-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-mono-800"
+                                                aria-pressed={isSelected}
+                                                onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    onSelectPostId(post.postId);
+                                                }}
+                                            >
+                                                <span>{post.title}</span>
+                                                <span className="sr-only">
+                                                    {isSelected ? " Selected post." : " Select post."}
+                                                </span>
+                                            </button>
                                         </td>
                                         <td className="px-4 py-3 text-sm text-mono-600 dark:text-mono-300">
                                             {formatPublicationState(post.publicationState)}

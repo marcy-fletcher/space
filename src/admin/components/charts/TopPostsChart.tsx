@@ -26,10 +26,15 @@ const TopPostsChart = ({posts}: TopPostsChartProps) => {
         .slice(0, 5)
         .reverse()
         .map((post) => ({
-            name: trimLabel(post.title),
+            postId: post.postId,
+            title: post.title,
             fullTitle: post.title,
             views: post.lifetimeViews
         }));
+
+    const labelsByPostId = new Map(
+        chartData.map((post) => [post.postId, trimLabel(post.title)])
+    );
 
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -38,9 +43,10 @@ const TopPostsChart = ({posts}: TopPostsChartProps) => {
                 <XAxis type="number" allowDecimals={false} stroke="#71717a"/>
                 <YAxis
                     type="category"
-                    dataKey="name"
+                    dataKey="postId"
                     width={140}
                     stroke="#71717a"
+                    tickFormatter={(value) => labelsByPostId.get(String(value)) ?? String(value)}
                 />
                 <Tooltip
                     formatter={(value) => [value, "Lifetime views"]}

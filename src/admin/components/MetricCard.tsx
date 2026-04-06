@@ -41,15 +41,16 @@ function formatMetricValue(card: OverviewCard): string {
 }
 
 function getHintVariant(hint: string | null) {
-    if (hint === "Period") {
-        return "primary" as const;
-    }
+    const normalizedHint = hint?.trim().toLowerCase();
 
-    if (hint === "Lifetime") {
-        return "gold" as const;
+    switch (normalizedHint) {
+        case "period":
+            return "primary" as const;
+        case "lifetime":
+            return "gold" as const;
+        default:
+            return "gray" as const;
     }
-
-    return "gray" as const;
 }
 
 const MetricCard = ({card, className}: MetricCardProps) => {

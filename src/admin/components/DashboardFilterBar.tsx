@@ -11,6 +11,7 @@ interface DashboardPostOption {
 
 interface DashboardFilterBarProps {
     filters: DashboardDateFilter;
+    activePreset: DashboardDatePreset | null;
     validationMessage?: string | null;
     postOptions: DashboardPostOption[];
     disabled?: boolean;
@@ -35,6 +36,7 @@ function toInputValue(value: DashboardDateString | null): string {
 
 const DashboardFilterBar = ({
     filters,
+    activePreset,
     validationMessage,
     postOptions,
     disabled = false,
@@ -54,7 +56,7 @@ const DashboardFilterBar = ({
                     </p>
                     <div className="flex flex-wrap gap-2">
                         {(Object.keys(presetLabels) as DashboardDatePreset[]).map((preset) => {
-                            const isActive = filters.preset === preset;
+                            const isActive = activePreset === preset;
 
                             return (
                                 <Button
@@ -104,6 +106,10 @@ const DashboardFilterBar = ({
                     {validationMessage ? (
                         <p className="font-medium text-red-600 dark:text-red-400">
                             {validationMessage}
+                        </p>
+                    ) : activePreset == null ? (
+                        <p className="text-mono-500 dark:text-mono-400">
+                            Custom range is overriding the saved {presetLabels[filters.preset].toLowerCase()} preset.
                         </p>
                     ) : (
                         <p className="text-mono-500 dark:text-mono-400">
