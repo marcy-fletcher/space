@@ -29,6 +29,7 @@ export interface OverviewChartPoint {
 export interface PostSeriesPoint {
     date: DashboardDateString;
     comments: number;
+    debugLogs: number;
 }
 
 export interface RankedPostRow {
