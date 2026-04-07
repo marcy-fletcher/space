@@ -1,1 +1,0 @@
-import{r}from"./vendor-react-HqBvLn9D.js";import{l as e,e as i}from"./index-DIvnsKrh.js";function g(o,t,s=!0){const n=JSON.stringify(t);r.useEffect(()=>{(async()=>s&&await e(i.pageVisit,{...t,pageName:o}))()},[o,n,s])}export{g as u};
