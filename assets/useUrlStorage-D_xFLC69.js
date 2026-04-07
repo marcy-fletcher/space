@@ -1,0 +1,1 @@
+import{a as P,r as n}from"./vendor-react-HqBvLn9D.js";const S=(t,c,a)=>{const[s,f]=P(),m=()=>{const e=Object.keys(t).reduce((r,o)=>{const u=s.get(o);return u?r[o]=u:r[o]=void 0,r},{});e&&c(e)};n.useEffect(m,[s]),n.useEffect(()=>{if(!a)return;const e=new URLSearchParams;Object.keys(t).forEach(r=>{t[r]&&e.set(r,t[r])}),e.toString()!==s.toString()&&f(e)},[t,a])};export{S as u};
