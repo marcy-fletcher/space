@@ -49,18 +49,21 @@ const Filters = () => {
 
     return (
         <Card className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 p-4">
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto">
                 <Select label="Sort by:"
+                        className="w-full sm:w-auto"
                         value={sortBy}
                         options={SortByOptions}
                         onChange={(str) => setParams({...params, sortBy: str as SortBy})}/>
 
                 <Select label="Order:"
+                        className="w-full sm:w-auto"
                         value={order}
                         options={OrderOptions}
                         onChange={(str) => setParams({...params, order: str as Order})}/>
 
                 <Select label="Tier:"
+                        className="w-full sm:w-auto"
                         value={tier}
                         options={TierOptions}
                         onChange={(str) => setParams({...params, tier: str === "all" ? undefined : str as PostTierFilter})}/>
