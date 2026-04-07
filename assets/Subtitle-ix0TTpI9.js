@@ -1,1 +1,0 @@
-import{j as m}from"./vendor-states-DZ3I310s.js";import"./vendor-react-HqBvLn9D.js";import{c as r}from"./index-CI2t0Kcl.js";const a=({children:t,className:o})=>m.jsx("p",{className:r("text-mono-600 dark:text-mono-400 text-sm",o),children:t});export{a as S};
