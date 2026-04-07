@@ -7,13 +7,15 @@ import TransformationBadge from "./TransformationBadge.tsx";
 import Group from "./Group.tsx";
 import Warning from "./Warning.tsx";
 import {sortByWarningLevel} from "../../types/warning.ts";
-import {faArrowRight, faSpinner} from "@fortawesome/free-solid-svg-icons";
+import {faArrowRight, faCrown, faSpinner} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactionsGroup from "./ReactionsGroup.tsx";
 import {useSearchStore} from "../../model/searchStore.ts";
 import {useState} from "react";
 import LinkButton from "../../../common/components/LinkButton.tsx";
 import {Link} from "react-router-dom";
+import Badge from "../../../common/components/Badge.tsx";
+import {getLowestSubscriptionTier} from "../../utils/getLowestSubscriptionTier.ts";
 
 interface AvailablePostCardProps {
     post: PostSummary
@@ -22,6 +24,7 @@ interface AvailablePostCardProps {
 const AvailablePostCard = ({post}: AvailablePostCardProps) => {
     const [openButtonClicked, setOpenButtonClicked] = useState(false);
     const {params, setParams} = useSearchStore();
+    const tier = getLowestSubscriptionTier(post.subscriptions);
 
     return (
         <Card className="relative w-full max-w-lg flex flex-col hover:border-primary-500">
@@ -40,6 +43,13 @@ const AvailablePostCard = ({post}: AvailablePostCardProps) => {
                 </Link>
             </div>
 
+            {tier &&
+                <div className="mb-4">
+                    <Badge variant="gold" className="w-fit px-3 py-1 text-xs">
+                        <FontAwesomeIcon icon={faCrown}/>
+                        <span>Tier: {tier.name}</span>
+                    </Badge>
+                </div>}
 
             {post.tags && post.tags.length > 0 &&
                 <div className="flex flex-wrap gap-2 mb-4">
