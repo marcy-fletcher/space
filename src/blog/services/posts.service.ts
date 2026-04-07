@@ -8,6 +8,7 @@ import type {Post} from "../types/post.ts";
 import {mapPost} from "../mappers/post.mapper.ts";
 import type {CreatePostDto} from "../dtos/forms/createPostDto.ts";
 import {mapPostIdentity} from "../mappers/postIdentity.mapper.ts";
+import {getLowerSubscriptionTierKeys} from "../utils/getLowerSubscriptionTierKeys.ts";
 
 export async function getPaginatedPosts(): Promise<PaginatedPostsResponse> {
     const searchParams = getSearchState().params;
@@ -43,6 +44,12 @@ export async function getPaginatedPosts(): Promise<PaginatedPostsResponse> {
             ),
             post_subscription_details(
               id, key, name, rank
+            ),
+            selected_tier:post_subscription_details!inner(
+              key
+            ),
+            lower_tiers:post_subscription_details(
+              key
             ),
             post_views(
               views
@@ -89,6 +96,18 @@ export async function getPaginatedPosts(): Promise<PaginatedPostsResponse> {
         }
     }
 
+    if (searchParams.tier) {
+        query = query
+            .eq('selected_tier.key', searchParams.tier);
+
+        const lowerTierKeys = getLowerSubscriptionTierKeys(searchParams.tier);
+
+        if (lowerTierKeys.length > 0) {
+            query = query
+                .in('lower_tiers.key', lowerTierKeys)
+                .is('lower_tiers', null);
+        }
+    }
 
     if (searchParams.sortBy === 'alphabet') {
         query = query.order('post_contents(title)', {

@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 import type {SelectOption} from "../../../utils/selectOption.ts";
 import Toggle from "../../../common/components/Toggle.tsx";
 import {parseBoolean, serializeBoolean} from "../../../utils/parseBoolean.ts";
+import {PostTierFilters, type PostTierFilter} from "../../types/postTierFilter.ts";
 
 const SortByOptions: SelectOption<SortBy>[] = [
     { label: "Date", value: 'date' },
@@ -17,11 +18,20 @@ const OrderOptions: SelectOption<Order>[] = [
     { label: "Asc", value: 'asc' },
 ]
 
+const TierOptions: SelectOption<PostTierFilter | "all">[] = [
+    {label: "All tiers", value: "all"},
+    ...PostTierFilters.map((subscription) => ({
+        label: subscription.name,
+        value: subscription.key
+    }))
+];
+
 const Filters = () => {
 
     const {params, setParams} = useSearchStore();
     const [sortBy, setSortBy] = useState<SortBy>(params.sortBy ?? 'date');
     const [order, setOrder] = useState<Order>(params.order ?? 'desc');
+    const [tier, setTier] = useState<PostTierFilter | "all">(params.tier ?? "all");
     const [hideUnavailable, setHideUnavailable] = useState<boolean>(
         parseBoolean(params.hideUnavailable));
 
@@ -29,6 +39,7 @@ const Filters = () => {
         async function onParamsUpdate() {
             setSortBy(params.sortBy ?? 'date');
             setOrder(params.order ?? 'desc');
+            setTier(params.tier ?? "all");
             setHideUnavailable(
                 parseBoolean(params.hideUnavailable));
         }
@@ -48,6 +59,11 @@ const Filters = () => {
                         value={order}
                         options={OrderOptions}
                         onChange={(str) => setParams({...params, order: str as Order})}/>
+
+                <Select label="Tier:"
+                        value={tier}
+                        options={TierOptions}
+                        onChange={(str) => setParams({...params, tier: str === "all" ? undefined : str as PostTierFilter})}/>
 
             </div>
 
