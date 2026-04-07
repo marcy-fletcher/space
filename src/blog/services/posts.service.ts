@@ -22,46 +22,74 @@ export async function getPaginatedPosts(): Promise<PaginatedPostsResponse> {
     const hideUnavailable = parseBoolean(searchParams.hideUnavailable);
 
     const supabase = await getSupabase();
-    const tierSelect = searchParams.tier ? `
-            selected_tier:post_subscription_details!inner(
-              key
-            ),
-            lower_tiers:post_subscription_details(
-              key
-            ),
-` : '';
 
-    let query = supabase
-        .schema('blog')
-        .from('posts')
-        .select(`
-            *,
-            post_contents(title, summary, picture_url),
-            post_tags(tags(*)),
-            post_metadata(
-              explicitness, slug
-            ),
-            post_transformations(
-              *
-            ),
-            post_warnings (
-              level, text
-            ),
-            reaction_counts_per_post(
-              reaction, reaction_count
-            ),
-            post_subscription_details(
-              id, key, name, rank
-            ),
-${tierSelect}
-            post_views(
-              views
-            ),
-            post_comment_counts(
-              comment_count
-            )
-        `, {count: 'exact'})
-        .range(start, end);
+    let query = searchParams.tier
+        ? supabase
+            .schema('blog')
+            .from('posts')
+            .select(`
+                *,
+                post_contents(title, summary, picture_url),
+                post_tags(tags(*)),
+                post_metadata(
+                  explicitness, slug
+                ),
+                post_transformations(
+                  *
+                ),
+                post_warnings (
+                  level, text
+                ),
+                reaction_counts_per_post(
+                  reaction, reaction_count
+                ),
+                post_subscription_details(
+                  id, key, name, rank
+                ),
+                selected_tier:post_subscription_details!inner(
+                  key
+                ),
+                lower_tiers:post_subscription_details(
+                  key
+                ),
+                post_views(
+                  views
+                ),
+                post_comment_counts(
+                  comment_count
+                )
+            `, {count: 'exact'})
+            .range(start, end)
+        : supabase
+            .schema('blog')
+            .from('posts')
+            .select(`
+                *,
+                post_contents(title, summary, picture_url),
+                post_tags(tags(*)),
+                post_metadata(
+                  explicitness, slug
+                ),
+                post_transformations(
+                  *
+                ),
+                post_warnings (
+                  level, text
+                ),
+                reaction_counts_per_post(
+                  reaction, reaction_count
+                ),
+                post_subscription_details(
+                  id, key, name, rank
+                ),
+                post_views(
+                  views
+                ),
+                post_comment_counts(
+                  comment_count
+                )
+            `, {count: 'exact'})
+            .range(start, end);
 
     if (hideUnavailable) {
         query = query.not('post_contents', 'is', null);
