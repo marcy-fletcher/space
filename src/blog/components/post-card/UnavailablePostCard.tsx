@@ -10,8 +10,8 @@ import {formatDate} from "../../../utils/formatDate.ts";
 import ReactionsGroup from "./ReactionsGroup.tsx";
 import type {PostSummary} from "../../types/postSummary.ts";
 import {useAuth} from "../../../auth/hooks/useAuth.ts";
-import type {SubscriptionTier} from "../../../auth/types/subscription.ts";
 import LinkButton from "../../../common/components/LinkButton.tsx";
+import {getLowestSubscriptionTier} from "../../utils/getLowestSubscriptionTier.ts";
 
 type Variant = 'primary' | 'green';
 type ContentType = "exclusive" | "locked";
@@ -21,11 +21,9 @@ const getRequirementText = (contentType: ContentType, post: PostSummary): string
         return "Registration Required";
     }
 
-    if (post.subscriptions && post.subscriptions.length > 0) {
-        const requiredTier: SubscriptionTier =
-            post.subscriptions.reduce((lowest, current) =>
-                current.rank < lowest.rank ? current : lowest
-            );
+    const requiredTier = getLowestSubscriptionTier(post.subscriptions);
+
+    if (requiredTier) {
         return `Required Subscription Tier: "${requiredTier.name}"`;
     }
 

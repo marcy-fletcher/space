@@ -2,6 +2,7 @@ import type {StateCreator} from "zustand/vanilla";
 import {create} from "zustand";
 import {devtools} from "zustand/middleware";
 import type {Order, SortBy} from "../types/postSummary.ts";
+import type {PostTierFilter} from "../types/postTierFilter.ts";
 
 export const defaultPage = 1;
 export const defaultLimit = 9;
@@ -11,6 +12,7 @@ export type PostsSearchParams = {
     limit?: string;
     order?: Order;
     sortBy?: SortBy;
+    tier?: PostTierFilter;
     hideUnavailable?: string;
     term?: string;
 }
@@ -38,6 +40,7 @@ const searchSlice: StateCreator<
         limit: undefined,
         sortBy: undefined,
         page: undefined,
+        tier: undefined,
         hideUnavailable: undefined,
     },
     initialized: false,
