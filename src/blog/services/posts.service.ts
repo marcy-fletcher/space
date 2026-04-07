@@ -22,6 +22,14 @@ export async function getPaginatedPosts(): Promise<PaginatedPostsResponse> {
     const hideUnavailable = parseBoolean(searchParams.hideUnavailable);
 
     const supabase = await getSupabase();
+    const tierSelect = searchParams.tier ? `
+            selected_tier:post_subscription_details!inner(
+              key
+            ),
+            lower_tiers:post_subscription_details(
+              key
+            ),
+` : '';
 
     let query = supabase
         .schema('blog')
@@ -45,12 +53,7 @@ export async function getPaginatedPosts(): Promise<PaginatedPostsResponse> {
             post_subscription_details(
               id, key, name, rank
             ),
-            selected_tier:post_subscription_details!inner(
-              key
-            ),
-            lower_tiers:post_subscription_details(
-              key
-            ),
+${tierSelect}
             post_views(
               views
             ),
