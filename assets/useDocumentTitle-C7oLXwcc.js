@@ -1,1 +1,0 @@
-import{r as o}from"./vendor-react-HqBvLn9D.js";import{A as u}from"./index-COs5y_WZ.js";function c(t,e=u.appName){o.useEffect(()=>{if(!t)return;const r=document.title;return document.title=`${t} - ${e}`,()=>{document.title=r}},[t,e])}export{c as u};
