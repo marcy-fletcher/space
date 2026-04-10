@@ -1,0 +1,1 @@
+import{r as t}from"./vendor-react-HqBvLn9D.js";import{T as r}from"./index-Dt38QbI7.js";const m=()=>{const e=t.useContext(r);if(e===void 0)throw new Error("useTheme must be used within a ThemeProvider");return e};export{m as u};
