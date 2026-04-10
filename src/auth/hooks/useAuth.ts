@@ -1,5 +1,5 @@
 import {useAuthStore} from './useAuthStore.ts'
-import {signIn, signOut, signUp} from '../services/auth.service.ts'
+import {requestPasswordReset, signIn, signOut, signUp, updatePassword} from '../services/auth.service.ts'
 import type {RoleKey} from "../types/roles.ts";
 
 export function useAuth() {
@@ -28,5 +28,7 @@ export function useAuth() {
         signUp,
         signIn,
         signOut,
+        requestPasswordReset,
+        updatePassword,
     }
 }

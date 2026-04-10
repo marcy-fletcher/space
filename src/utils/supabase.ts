@@ -4,6 +4,17 @@ let supabaseClientPromise: Promise<ReturnType<typeof import('@supabase/supabase-
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
 
+export function getAppRedirectUrl(hashPath?: string) {
+    const appUrl = new URL(import.meta.env.BASE_URL, window.location.origin);
+
+    if (hashPath) {
+        const normalizedHashPath = hashPath.startsWith("/") ? hashPath : `/${hashPath}`;
+        appUrl.hash = normalizedHashPath;
+    }
+
+    return appUrl.toString();
+}
+
 export const getSupabase = async (): Promise<SupabaseClient> => {
     if (supabaseClientPromise) {
         return supabaseClientPromise;

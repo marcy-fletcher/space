@@ -3,7 +3,7 @@ import {faArrowLeft, faEnvelope, faLock, faSpinner} from '@fortawesome/free-soli
 import Button from "../common/components/Button.tsx";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useAuth} from "../auth/hooks/useAuth.ts";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useDocumentTitle} from "../layout/hooks/useDocumentTitle.ts";
 import InputField from "../common/components/inputs/InputField.tsx";
 import {useForm} from "react-hook-form";
@@ -68,6 +68,12 @@ const Login = () => {
 
                     <InputField disabled={isPending} icon={faEnvelope} id="email" label="Email" type="email" register={register} error={errors.email}/>
                     <InputField disabled={isPending} icon={faLock} id="password" label="Password" type="password" register={register} error={errors.password}/>
+
+                    <div className="flex justify-end">
+                        <Link className="text-sm text-primary-600 hover:text-primary-700 underline" to="/restore-password">
+                            Forgot password?
+                        </Link>
+                    </div>
 
                     <Button disabled={!isValid || isPending} className="w-full" type="submit">
                         {isPending ? (

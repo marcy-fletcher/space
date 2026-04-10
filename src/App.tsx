@@ -14,6 +14,8 @@ const MainLayout = lazy(() => import("./layout/MainLayout.tsx"));
 const Login = lazy(() => import("./pages/Login.tsx"));
 const FocusLayout = lazy(() => import("./layout/FocusLayout.tsx"));
 const Register = lazy(() => import("./pages/Register.tsx"));
+const RestorePasswordRequest = lazy(() => import("./pages/RestorePasswordRequest.tsx"));
+const RestorePasswordUpdate = lazy(() => import("./pages/RestorePasswordUpdate.tsx"));
 const Posts = lazy(() => import("./blog/pages/Posts.tsx"));
 const Post = lazy(() => import("./blog/pages/Post.tsx"));
 const About = lazy(() => import("./blog/pages/About.tsx"));
@@ -114,6 +116,8 @@ function Routing() {
                             </ProtectedRoute>
                         }
                     />
+                    <Route path="/restore-password" element={<RestorePasswordRequest/>}/>
+                    <Route path="/restore-password/update" element={<RestorePasswordUpdate/>}/>
                     <Route path="/403" element={<Unauthorized/>}/>
                     <Route path="/email-confirmation" element={<EmailConfirmation/>}/>
                     <Route path="*" element={<NotFound/>}/>

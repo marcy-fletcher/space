@@ -1,6 +1,7 @@
 import CredentialsCheckError from "../errors.ts";
 import type {UserIdentity} from "../types/roles.ts";
 import {getSupabase} from "../../utils/supabase.ts";
+import {getAppRedirectUrl} from "../../utils/supabase.ts";
 
 export async function signIn(email: string, password: string) {
     const supabase = await getSupabase();
@@ -51,7 +52,7 @@ export async function signUp(username: string, email: string, password: string) 
         password,
         options: {
             data: {username},
-            emailRedirectTo: 'https://marcy-fletcher.github.io/space/'
+            emailRedirectTo: getAppRedirectUrl(),
         },
     });
 
@@ -66,6 +67,30 @@ export async function signOut() {
     const {error} = await supabase.auth.signOut();
 
     if (error) throw error;
+}
+
+export async function requestPasswordReset(email: string) {
+    const supabase = await getSupabase();
+
+    const {data, error} = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://marcy-fletcher.github.io/space/#/restore-password/update'
+    });
+
+    if (error) throw error;
+
+    return data;
+}
+
+export async function updatePassword(password: string) {
+    const supabase = await getSupabase();
+
+    const {data, error} = await supabase.auth.updateUser({password});
+
+    if (error) throw error;
+
+    await supabase.auth.signOut();
+
+    return data;
 }
 
 export async function getIdentity(userId: string): Promise<UserIdentity | undefined> {
