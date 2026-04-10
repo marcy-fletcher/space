@@ -3,6 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {AuthApiError} from "@supabase/supabase-js";
 import {useMutation} from "@tanstack/react-query";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
@@ -15,6 +16,7 @@ import InputField from "../common/components/inputs/InputField.tsx";
 import Card from "../layout/Card.tsx";
 import {useDocumentTitle} from "../layout/hooks/useDocumentTitle.ts";
 import PageHeader from "../layout/PageHeader.tsx";
+import {initRecoverySession} from "../auth/services/auth.service.ts";
 
 interface RestorePasswordUpdateInput {
     password: string;
@@ -46,6 +48,7 @@ const RestorePasswordUpdate = () => {
 
     const navigate = useNavigate();
     const {updatePassword} = useAuth();
+    const [isInitializingRecovery, setIsInitializingRecovery] = useState(true);
 
     const {
         register,
@@ -57,10 +60,26 @@ const RestorePasswordUpdate = () => {
         mode: "onChange",
     });
 
+    useEffect(() => {
+        const init = async () => {
+            try {
+                await initRecoverySession();
+            } catch (error) {
+                await logError(ErrorCodes.authenticationError, error);
+                toast.error("Unable to verify your reset link. Please request a new one.");
+                navigate("/restore-password", {replace: true});
+            } finally {
+                setIsInitializingRecovery(false);
+            }
+        };
+
+        void init();
+    }, [navigate]);
+
     const {mutateAsync, isPending} = useMutation({
         mutationFn: async (data: RestorePasswordUpdateInput) => updatePassword(data.password),
-        onError: (error) => {
-            logError(ErrorCodes.authenticationError, error);
+        onError: async (error) => {
+            await logError(ErrorCodes.authenticationError, error);
 
             if (error instanceof AuthApiError) {
                 setError("password", {type: "custom", message: error.message});
@@ -75,6 +94,8 @@ const RestorePasswordUpdate = () => {
         },
     });
 
+    const isBusy = isPending || isInitializingRecovery;
+
     return (
         <div className="w-full min-h-screen flex flex-col items-center justify-center my-8">
             <PageHeader title="Set New Password" subtitle="Choose a new password for your account"/>
@@ -82,7 +103,7 @@ const RestorePasswordUpdate = () => {
             <form className="w-full max-w-md" onSubmit={handleSubmit(async (data) => await mutateAsync(data))} noValidate>
                 <Card className="w-full space-y-6">
                     <InputField
-                        disabled={isPending}
+                        disabled={isBusy}
                         icon={faLock}
                         label="New Password"
                         id="password"
@@ -91,7 +112,7 @@ const RestorePasswordUpdate = () => {
                         error={errors.password}
                     />
                     <InputField
-                        disabled={isPending}
+                        disabled={isBusy}
                         icon={faKey}
                         label="Confirm Password"
                         id="confirmPassword"
@@ -100,8 +121,8 @@ const RestorePasswordUpdate = () => {
                         error={errors.confirmPassword}
                     />
 
-                    <Button disabled={!isValid || isPending} className="w-full" type="submit">
-                        {isPending ? <FontAwesomeIcon icon={faSpinner} spin/> : "Update Password"}
+                    <Button disabled={!isValid || isBusy} className="w-full" type="submit">
+                        {isBusy ? <FontAwesomeIcon icon={faSpinner} spin/> : "Update Password"}
                     </Button>
                 </Card>
             </form>

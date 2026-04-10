@@ -61,6 +61,35 @@ export async function signUp(username: string, email: string, password: string) 
     return data;
 }
 
+function getRecoveryTokens() {
+    const hash = window.location.hash;
+    const queryString = hash.includes('#') ? hash.split('#').pop() : '';
+    const params = new URLSearchParams(queryString);
+
+    return {
+        access_token: params.get('access_token'),
+        refresh_token: params.get('refresh_token'),
+        type: params.get('type'),
+    }
+}
+
+export async function initRecoverySession() {
+    const supabase = await getSupabase();
+    const { access_token, refresh_token, type } = getRecoveryTokens()
+
+    if (type !== 'recovery' || !access_token || !refresh_token) {
+        throw new Error('Missing recovery tokens in URL')
+    }
+
+    const { error } = await supabase.auth.setSession({
+        access_token,
+        refresh_token,
+    })
+
+    if (error)
+        throw error
+}
+
 export async function signOut() {
     const supabase = await getSupabase();
 
