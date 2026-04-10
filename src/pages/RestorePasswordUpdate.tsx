@@ -15,7 +15,6 @@ import InputField from "../common/components/inputs/InputField.tsx";
 import Card from "../layout/Card.tsx";
 import {useDocumentTitle} from "../layout/hooks/useDocumentTitle.ts";
 import PageHeader from "../layout/PageHeader.tsx";
-import EmailConfirmation from "./EmailConfirmation.tsx";
 
 interface RestorePasswordUpdateInput {
     password: string;
@@ -46,9 +45,7 @@ const RestorePasswordUpdate = () => {
     usePageLog("Restore Password Update");
 
     const navigate = useNavigate();
-    const {updatePassword, initialized, session} = useAuth();
-
-    const recoveryReady = initialized && !!session;
+    const {updatePassword} = useAuth();
 
     const {
         register,
@@ -77,26 +74,6 @@ const RestorePasswordUpdate = () => {
             navigate("/login", {replace: true});
         },
     });
-
-    if (!initialized) {
-        return (
-            <div className="w-full min-h-screen flex items-center justify-center">
-                <Card className="px-6 py-5 text-center text-mono-700 dark:text-mono-100">
-                    <FontAwesomeIcon icon={faSpinner} spin className="mr-3"/>
-                    Checking your reset session...
-                </Card>
-            </div>
-        );
-    }
-
-    if (!recoveryReady) {
-        return (
-            <EmailConfirmation
-                title="Reset Link Required"
-                message="This page only works after opening a valid password reset email. Request a new reset link and use the latest email."
-            />
-        );
-    }
 
     return (
         <div className="w-full min-h-screen flex flex-col items-center justify-center my-8">
