@@ -40,7 +40,7 @@ export async function logError<T>(errorCode: ErrorCode, metadata?: T) {
 
     const supabase = await getSupabase();
 
-    await supabase.schema('logging').rpc('log_activity', {
+    await supabase.schema('logging').rpc('log_debug', {
         p_event: errorCode,
         p_metadata: metadata,
     });
