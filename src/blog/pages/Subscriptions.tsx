@@ -79,6 +79,19 @@ const Subscriptions = () => {
     return (
         <div className="container mx-auto px-4 max-w-5xl">
             <PageHeader title="Subscriptions" subtitle="Choose the experience that's right for you"/>
+
+            <Card className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-lg p-4 text-sm text-amber-800 dark:text-amber-200 mt-6">
+                <div className="flex items-start gap-3">
+                    <FontAwesomeIcon
+                        icon={faLightbulb}
+                        className="mt-0.5 text-amber-600 dark:text-amber-400 flex-shrink-0"
+                    />
+                    <p>
+                        <strong>Important:</strong> Subscription requests are processed automatically and may take up to 10 minutes. If your request is rejected, please review the rules carefully and try again.
+                    </p>
+                </div>
+            </Card>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
                 <div className="flex justify-center">
                     <Card
