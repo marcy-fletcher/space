@@ -133,7 +133,7 @@ export default function SubscriptionRequestModal({
                             <div className="flex items-start gap-3">
                                 <FontAwesomeIcon icon={faClock} className="mt-0.5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
                                 <p>
-                                    <strong>Important:</strong> Subscription requests are manually reviewed. Review usually takes up to 24 hours, though it may occasionally be faster or slower.
+                                    <strong>Important:</strong> Subscription requests are reviewed automatically and may take up to 10 minutes to process. If your request is rejected, please review the rules carefully and submit a new request.
                                 </p>
                             </div>
                         </Card>
