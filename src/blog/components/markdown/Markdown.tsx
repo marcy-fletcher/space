@@ -14,22 +14,22 @@ const MarkdownComponents = {
         </div>
     ),
     h1: ({ children }: { children?: React.ReactNode }) => (
-        <h1 className="text-3xl font-bold text-mono-800 dark:text-mono-100 mt-8 mb-4 font-serif border-b-2 border-primary-200 dark:border-primary-800 pb-2">
+        <h1 className="text-3xl font-bold text-mono-800 dark:text-mono-100 mt-8 mb-4 py-2 font-serif text-center border-y border-mono-200 dark:border-mono-600">
             {children}
         </h1>
     ),
     h2: ({ children }: { children?: React.ReactNode }) => (
-        <h2 className="text-2xl font-bold text-mono-800 dark:text-mono-100 mt-8 mb-4 font-serif border-b border-primary-100 dark:border-primary-900 pb-2">
+        <h2 className="text-2xl font-bold text-mono-800 dark:text-mono-100 mt-8 mb-4 py-2 font-serif text-center border-y border-mono-200 dark:border-mono-600">
             {children}
         </h2>
     ),
     h3: ({ children }: { children?: React.ReactNode }) => (
-        <h3 className="text-xl font-bold text-mono-800 dark:text-mono-100 mt-6 mb-3 font-serif">
+        <h3 className="text-xl font-bold text-mono-800 dark:text-mono-100 mt-6 mb-3 py-1 font-serif text-center border-y border-mono-200 dark:border-mono-600">
             {children}
         </h3>
     ),
     h4: ({ children }: { children?: React.ReactNode }) => (
-        <h4 className="text-lg font-bold text-mono-800 dark:text-mono-100 mt-6 mb-3 font-serif">
+        <h4 className="text-lg font-bold text-mono-800 dark:text-mono-100 mt-6 mb-3 py-1 font-serif text-center border-y border-mono-200 dark:border-mono-600">
             {children}
         </h4>
     ),
