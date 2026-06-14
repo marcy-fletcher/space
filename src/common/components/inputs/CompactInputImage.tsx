@@ -1,4 +1,4 @@
-import React, {useState, useRef, useCallback, useEffect} from 'react';
+import React, {useState, useRef, useCallback, useEffect, useId} from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faCloudUploadAlt,
@@ -17,8 +17,10 @@ interface CompactInputImageProps {
     onUploadFailed?: () => void;
     onReset?: () => void;
     onError?: (error: string) => void;
+    onImageUrlChange?: (url: string) => void;
     className?: string;
-    initialImageUrl?: string; // New prop to pass the initial image URL
+    initialImageUrl?: string;
+    showUrlInput?: boolean;
 }
 
 const CompactInputImage = ({
@@ -27,14 +29,17 @@ const CompactInputImage = ({
                                onUploadFailed,
                                onReset,
                                onError,
+                               onImageUrlChange,
                                className = '',
-                               initialImageUrl, // Destructure the initial image URL
+                               initialImageUrl,
+                               showUrlInput = false,
                            }: CompactInputImageProps) => {
     const [isUploading, setIsUploading] = useState(false);
-    const [imageUpload, setImageUpload] = useState<ImageUpload | undefined>(undefined);
+    const [imageUrl, setImageUrl] = useState(initialImageUrl ?? '');
     const [dragOver, setDragOver] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const urlInputId = useId();
 
     const handleError = useCallback((error: string) => {
         onError?.(error);
@@ -42,7 +47,7 @@ const CompactInputImage = ({
         setIsUploading(false);
     }, [onError]);
 
-    const handleFile = async (file: File) => {
+    const handleFile = useCallback(async (file: File) => {
         if (!file.type.startsWith('image/')) {
             handleError('Please select a valid image file');
             return;
@@ -51,15 +56,16 @@ const CompactInputImage = ({
         setIsUploading(true);
         try {
             const response = await uploadImage(file);
-            setImageUpload(response);
+            setImageUrl(response.thumb.url);
             onUploadComplete?.(response);
+            onImageUrlChange?.(response.thumb.url);
         } catch (error) {
             handleError(error instanceof Error ? error.message : 'Upload failed');
             onUploadFailed?.();
         } finally {
             setIsUploading(false);
         }
-    };
+    }, [handleError, onImageUrlChange, onUploadComplete, onUploadFailed]);
 
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -98,7 +104,7 @@ const CompactInputImage = ({
                 }
             }
         }
-    }, [allowCopyPaste]);
+    }, [allowCopyPaste, handleFile]);
 
     useEffect(() => {
         document.addEventListener('paste', handlePaste);
@@ -106,21 +112,26 @@ const CompactInputImage = ({
     }, [handlePaste]);
 
     useEffect(() => {
-        if (initialImageUrl) {
-            setImageUpload({thumb: {mime: '', name: '', extension: '', filename: '', url: initialImageUrl}});
-        }
-    }, [initialImageUrl]); // Update the image state when initialImageUrl prop changes
+        setImageUrl(initialImageUrl ?? '');
+    }, [initialImageUrl]);
 
     const triggerFileInput = () => fileInputRef.current?.click();
 
     const resetUploader = () => {
-        setImageUpload(undefined);
+        setImageUrl('');
         if (fileInputRef.current) fileInputRef.current.value = '';
+        onImageUrlChange?.('');
         onReset?.();
     };
 
+    const handleUrlInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const nextUrl = e.target.value;
+        setImageUrl(nextUrl);
+        onImageUrlChange?.(nextUrl);
+    };
+
     return (
-        <div className={cn("w-fit select-none", className)}>
+        <div className={cn(showUrlInput ? "flex max-w-sm flex-col gap-2 select-none" : "w-fit select-none", className)}>
             <input
                 ref={fileInputRef}
                 type="file"
@@ -129,10 +140,10 @@ const CompactInputImage = ({
                 className="hidden"
             />
 
-            {imageUpload ? (
-                <div className="relative inline-block group">
+            {imageUrl ? (
+                <div className="relative inline-block self-start group">
                     <img
-                        src={imageUpload.thumb.url}
+                        src={imageUrl}
                         alt="Uploaded"
                         className="w-32 h-32 object-cover rounded-lg border-2 border-mono-300 dark:border-mono-600"
                     />
@@ -168,7 +179,7 @@ const CompactInputImage = ({
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     className={cn(
-                        "w-32 h-32 rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all gap-2",
+                        "w-32 h-32 self-start rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all gap-2",
                         dragOver
                             ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
                             : "border-mono-400 dark:border-mono-600 hover:border-mono-500 dark:hover:border-mono-500",
@@ -190,6 +201,28 @@ const CompactInputImage = ({
                             </span>
                         </>
                     )}
+                </div>
+            )}
+
+            {showUrlInput && (
+                <div className="flex flex-col gap-1">
+                    <label
+                        htmlFor={urlInputId}
+                        className="text-sm font-medium text-mono-700 dark:text-mono-300"
+                    >
+                        Image URL
+                    </label>
+                    <input
+                        id={urlInputId}
+                        type="text"
+                        value={imageUrl}
+                        onChange={handleUrlInputChange}
+                        placeholder="https://example.com/image.jpg"
+                        spellCheck={false}
+                        autoCapitalize="none"
+                        autoComplete="off"
+                        className="w-full rounded-md border border-mono-300 bg-white px-3 py-2 text-sm text-mono-900 placeholder-mono-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-pink-400 dark:border-mono-600 dark:bg-mono-700 dark:text-mono-100 dark:placeholder-mono-500"
+                    />
                 </div>
             )}
         </div>

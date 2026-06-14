@@ -188,16 +188,9 @@ const EditPostForm = ({state, onSubmit}: EditPostFormProps) => {
 
             <CompactInputImage
                 initialImageUrl={state?.picture_url}
-                onUploadComplete={(upload) => {
-                    setValue("picture_url", upload.thumb.url)
-                    trigger("picture_url")
-                }}
-                onUploadFailed={() => {
-                    setValue("picture_url", "")
-                    trigger("picture_url")
-                }}
-                onReset={() => {
-                    setValue("picture_url", "")
+                showUrlInput
+                onImageUrlChange={(url) => {
+                    setValue("picture_url", url)
                     trigger("picture_url")
                 }}
             />
