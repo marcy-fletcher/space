@@ -55,14 +55,6 @@ const About = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-y-8 md:gap-8 mt-4">
                     <div className="flex flex-col gap-4">
 
-                        <Section title="Account" icon={faPenNib} variant="green">
-                            <Card className="dark:border-green-800 p-3">
-                                <p className="text-gray-700 dark:text-gray-300 text-sm/6">
-                                    You can contact me through any available channel, and we'll discuss our options.
-                                </p>
-                            </Card>
-                        </Section>
-
                         <Section title="Comissions" icon={faPenNib} variant="yellow">
                             <Card className="dark:border-yellow-800 p-3">
                                 <p className="text-gray-700 dark:text-gray-300 text-sm/6">
