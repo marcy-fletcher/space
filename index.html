@@ -1,17 +1,50 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/space/favicon.ico" sizes="any">
-    <title>Marcy's Private Space</title>
-    <script type="module" crossorigin src="/space/assets/index-B8L0GlDP.js"></script>
-    <link rel="modulepreload" crossorigin href="/space/assets/vendor-react-HqBvLn9D.js">
-    <link rel="modulepreload" crossorigin href="/space/assets/vendor-states-DZ3I310s.js">
-    <link rel="modulepreload" crossorigin href="/space/assets/vendor-font-awesome-BZjQIk0M.js">
-    <link rel="stylesheet" crossorigin href="/space/assets/index-DcV0kGAR.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>We're moving — Marcy's Library</title>
+    <meta
+      name="description"
+      content="Marcy's Library is moving to a new home. The library is packing its shelves, and we'll be back soon. Thank you for your patience."
+    />
+    <meta name="robots" content="noindex, follow" />
+    <link rel="icon" href="assets/brand-icon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="assets/barlow-condensed-light.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div id="root"></div>
+    <header class="site-header">
+      <div class="brand">
+        <img src="assets/brand-icon.svg" width="40" height="40" alt="" />
+        <span>Marcy's <span class="brand-accent">Library</span></span>
+      </div>
+    </header>
+
+    <main>
+      <div class="notice">
+        <p class="eyebrow">A new chapter</p>
+        <h1>
+          We're moving<br />to a new home<span class="brand-accent">.</span>
+        </h1>
+        <p class="description">The library is packing its shelves.</p>
+        <p class="return-note">We'll be back soon.</p>
+      </div>
+      <img
+        class="moving-art"
+        src="assets/moving-librarian-v3.webp"
+        width="1120"
+        height="1400"
+        alt="A red-skinned devil librarian with long black hair packing ornate books into moving boxes."
+        fetchpriority="high"
+      />
+    </main>
   </body>
 </html>
