@@ -25,7 +25,7 @@ jobs:
       - name: Prepare static site
         run: |
           mkdir -p dist
-          cp -R index.html styles.css assets dist/
+          cp index.html dist/
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
