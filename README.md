@@ -4,21 +4,13 @@ A standalone temporary notice matching Marcy's Library: Barlow Condensed Light, 
 
 ## Message
 
-The move is still in progress: "We're moving to a new home." The supporting copy reads "The library is packing its shelves. We'll be back soon." There is no destination link or promised reopening date.
+The notice reads “We've moved.” and links to [Marcy's Library at its new address](https://marcyfletcher.vercel.app/).
 
 ## Upload
 
 Upload `index.html`, `styles.css`, and the complete `assets/` directory to the old site's public document root. Preserve their relative paths. No installation, build, backend, CDN, or framework is required. You can also open `index.html` directly to preview it.
 
 The page does not redirect automatically. The theme follows the operating system, with no manual switch. The page requires no JavaScript and contains no analytics or remote assets.
-
-## GitHub Pages deployment
-
-The `Deploy` workflow publishes the notice on pushes to `master`. It can also be started manually from the Actions tab with `master` selected.
-
-The workflow copies only `index.html`, `styles.css`, and `assets/` into `dist/`, then publishes that directory to the `gh-pages` branch. It requires no Node.js, npm dependencies, build command, or repository secrets beyond the automatic `GITHUB_TOKEN`. Old published files are removed during deployment.
-
-In the repository's **Settings → Pages**, the source must be **Deploy from a branch**, with branch **gh-pages** and folder **/ (root)**.
 
 This notice applies wherever your host serves this HTML file. Existing deep URLs need a host-level fallback or redirect configured separately. No hosting configuration is included.
 
